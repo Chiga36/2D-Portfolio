@@ -1,0 +1,1795 @@
+Intro
+0:00
+instead of a boring portfolio why not make a game in this tutorial JS Legend
+0:05
+Dev will show you how to use JavaScript and Kaboom JS to create an interactive
+0:11
+developer portfolio hi everyone welcome to this new video today we will be
+0:16
+building a 2d portfolio project so it's a 2d developer portfolio but as a 2d
+0:22
+game and without waiting much further let's jump right into it so this is what
+0:27
+we're going to build you can move around a house and then as you approach objects
+0:33
+you can have a text box that tells you a bit more about uh yourself here I've
+0:39
+selected some text for example here there's my CS degree this is my CS degree I hanged it on the wall because
+0:45
+I'm proud of it and then if you move around you go here you have a place to
+0:51
+have your resume can click if you click on that it will open a link with your
+0:58
+resume hosted here for example this is just a template so this is how this is
+1:03
+this is the idea behind a project here you have a bit of text so it's an
+1:09
+original way of making a software developer portfolio uh I've seen a
+1:15
+couple where it was in 3D but nobody seems to have made uh in 2D actually
+1:21
+there there were some so I thought I would just teach you how to do it what's interesting here is that we're going to
+1:27
+build this project with JavaScript and the Kaboom J Library so Kaboom JS is a
+1:33
+library for making games in JavaScript it's very easy and intuitive but also for all that is the text here the text
+1:40
+box the the text here as well this is all HTML and CSS uh here because the
+1:46
+reason is that for this project everything should be uh interactable
+1:51
+with the mouse or the touchcreen so if I open the dev tools and go to the mobile
+1:58
+view and then here you should be able to move around and the text therefore should be responsive so here example you
+2:07
+have a text and that's it you can close so for
+2:13
+this to be achievable for the game to work on all aspect ratios it was important for me to make the UI portion
+2:19
+of this project in HTML and CSS so let's jump right into project but
+2:25
+before we do that I just want to mention a few things so if if you're interested
+2:30
+in having written tutorials you can go to my substack the link will be in the description below where you can have
+2:37
+written content that explains uh specific Concepts so on YouTube I make
+2:43
+ful length project tutorials and sometimes you just want to know how to do one specific thing so the substack
+2:50
+here my newsletter is for that so here for example for this project it's going to be relevant to know how to implement
+2:55
+2D uh topown controls uh for a mobile web game so here we go you have videos
+3:02
+here that just showcase the results another thing I want to mention is just to uh showcase my uh buy me a coffee
+3:09
+page so if you want to support the channel you can uh buy the the uh support with $5 a month and with this
+3:17
+tier and you get access to this tutorial you're currently watching and all the
+3:22
+future tutorials in advance so Early Access you you also get early access to the um do the source code and some
+3:31
+progress updates as I do them so if you're interested in supporting the channel so I can focus more on making
+Setup
+3:38
+tutorials feel free to contribute here you can also just leave a a normal tip
+3:44
+if you want all right so let's jump right into the project so I'm going to use for this project vs code uh it's the
+3:51
+editor I use mostly for everything and here we're going to need a few things so
+3:57
+let's start our project so I assume that you know how to use vs code at the basic level so you have it installed on your
+4:04
+computer you also have it um you have no JS installed also which is going to be
+4:10
+important for this tutorial because we're going to use vit vit is a bundler that allows you to um write your
+4:17
+JavaScript in a more convenient way so we could use script tags as we did in a
+4:25
+lot of the previous tutorials but with v you get uh uh you can install your
+4:30
+dependencies by typing in npm install and it's it's just more convenient in a
+4:36
+certain sense and you will also get Auto completion and U Snippets code Snippets
+4:42
+from Kaboom from the Kaboom J library that tells you this is a this feature what it does which is something you
+4:48
+don't get if you just use a script tag but feel free to follow using only a
+4:54
+script tag if you want uh previous the setup sections of previous tutorials are going to teach you how uh so yeah I'm
+5:02
+just going in this specific tutorial I'm not going to spend a lot of time on this so the first thing we're going to do do
+5:08
+is to type npm create V at
+5:15
+latest and then dot because we want to create the project within the same folder we're currently here in so here
+5:22
+it's 2D portfolio so I hit enter and then we should have something
+5:29
+appear need to install the following package yep and then here it's going to ask you
+5:36
+to select the framework we're going to go with vanilla vanilla JavaScript and it's going to add a bunch
+5:42
+of stuff so for now just do npm install
+5:48
+Kaboom so it's going to install the Kaboom Jaz Library oops I I hit the wrong thing but hit
+5:54
+enter is it going to work okay all right so it's going to install the project and
+6:00
+then in your package.json you can see are your dependencies so here we have a kaboom all right now the rest of the
+6:09
+project um we're going to need to set a few things up so the first thing we're
+6:15
+going to set up is I'm going to remove a lot of the boiler plate you see here I'm
+6:20
+going to remove main Jess I'm going to remove counter J I'm also going to
+6:25
+remove this and with then v s G I think it's not needed as well so this this
+6:34
+this remove and of and also the style at CSS we're not going to need need it for
+6:40
+this project so delete okay now once we have this let's
+6:46
+create a few folders we going to need the source folder SRC this is where we're going to write our
+6:53
+code um our JavaScript code we also going to need the public folder I did
+6:59
+deleted it by accident I wanted to just delete it was what was in the public folder and we're going to create at the
+7:08
+root of the project a v config.js file this is going to be
+7:16
+useful for a specific reason we want to be able to export so the way a bundler
+7:22
+works it it compiles your JavaScript so the nodejs JavaScript that you write and
+7:28
+the JavaScript that runs in the the browser is not necessarily this exact same thing so this bundler basically
+7:35
+transpile or compiles your JavaScript to a JavaScript version or um it's a bit
+7:42
+hard to explain to a version of JavaScript not not a version to JavaScript that can run in the browser
+7:48
+as it is so y now the reason for this is that um a
+7:55
+lot of features were not supported in the past in the browser version of
+8:01
+JavaScript while in nodejs you could have things like convenient things like using import statements but now import
+8:07
+statements are actually available in JavaScript in the browser so that's how
+8:12
+I've been doing the various projects you've seen on the channel if you're familiar in the past in the past
+8:19
+tutorials so in the V.C config.js we need to specify uh certain things so not
+8:26
+uh just want to clarify again that not only does a bond lert transpile your code your JavaScript code so it can run
+8:32
+in the browser it also do optimizations minification so that your your code is
+8:38
+really Compact and takes the least amount of space all right so here I'm going to do
+8:43
+export default and then Define config this is coming from vit so it's going to
+8:50
+import it from vit here and then within we're going to have
+8:57
+to specify the base so the base here when we run the npm Run
+9:04
+build command which is used to do the transpiling and gives us the actual
+9:10
+code gives us the actual code that is going to be used um that you actually
+9:16
+put on your server or on h. to have your we website up we need this base thing
+9:25
+otherwise it's not going to be able to find the assets for examp example the Sprites with used we use with Kaboom
+9:32
+Jazz the second thing we need to specify is the build and here the minification
+9:38
+we're going to use something called turer instead of the default es build so
+9:43
+the reason for this is due to caboom there is a bug with the way Kaboom is made that if you just use the default
+9:51
+it's going to give you code that doesn't work the the the actual output will not
+9:56
+no longer work so that's why we need to install this alternative called
+10:02
+turer which is going to make our code turer so smaller minified so once this
+10:08
+is I should have installed it as a dependency so npm d-d for
+10:15
+dependency install um turer I think that's the
+10:21
+command or if it's not that it's going to be the reverse all right now if I look at the
+10:26
+package.json you can see that I A Dev dependency we have added turer okay we
+10:32
+have everything we need so now I'm going to create a main.js file and in the
+10:38
+index.html we're going to have to do a couple of things so I'm just going to remove that so the first thing we
+10:46
+need is to create a style tag within the body this is where we're going to write
+10:53
+our CSS now you could have decided to use an external uh CSS file but but
+10:59
+because this project is not really CSS heavy it isn't really that
+11:04
+necessary the second thing we need to uh modify is here the script tag that Imports the main.js file we need to
+11:12
+actually modify the path to be Source like that because we we have created this
+11:19
+Source folder in which is our main.js
+11:25
+file okay now in the div we actually can
+11:30
+work this out later but be um actually never mind here we're going to create
+11:36
+our canvas that we're going to give the control of it to Kaboom so I'm going to call it game the
+11:45
+ID is going to be game and here we're going to have a div that is going to have the ID of UI
+11:52
+I'm not sure if I'm going to use this later on I might just remove this ID which just is going to contain everything that is the UI so the text
+11:58
+box and text all right now that we have this in our source folder I'm going to
+12:06
+create a file this file is going to be called Kaboom context. JS so CTX to
+12:13
+abbreviate it and this is where we're going to set
+12:18
+up Kaboom so I'm going to use import Kaboom from Kaboom this is possible
+12:23
+because we have installed Kaboom JS and you can see that there is a difference in the way native JavaScript
+12:31
+that works in the browser deals with Imports and how this nodejs version of JavaScript works so if we were to use
+12:40
+the native JavaScript in the browser with modules
+12:46
+you have to add the JS for the file extension you want to import but this is
+12:51
+not needed when you're using a tool like vit okay so here I'm going to create our
+12:59
+canvas um or Kaboom context which is going to be unique and through that object this K
+13:08
+we're going to call all the functions we need so we're going to pass this around in our project I think this allows us to
+13:13
+have cleaner code as we as the project grows instead of having to instead of
+13:19
+importing Kaboom globally where every all functions can be called directly from anywhere so this is a pattern I
+13:26
+recommend that you use for your Kaboom Jazz prod projects so in when you create
+13:31
+a the Kaboom context you need to pass a few params actually don't need to pass
+13:37
+any params by default but if we want to achieve the thing I I said about not making it Global you have to pass in the
+13:44
+global property and set it to false then here this is going to be relevant for the fact that we want our
+13:51
+project to work on moob mobile as well so we want to have the touch to Mouse property which again is from kaboom and
+13:59
+set it to true it's going to translate all touch events uh on the phone to
+14:06
+click events so that you can basically write your code with the mouse in mind but it's going to work just just as well
+14:13
+with mobile and then finally we can have the canvas property where we're just going to give to Kaboom the canvas
+14:21
+element and the way we're going to do that is by using document get element by
+14:26
+ID and here we give it the game ID if you remember in
+14:32
+index.html we gave to this canvas the ID of game so we're just telling Kaboom
+14:38
+here take the the element take control of it and do whatever you want whatever you
+14:43
+need okay so now that we have this everything is fine and in
+14:51
+main.js we can start writing our code but you know before doing any of that let's create all the other files we're
+14:58
+going to need so constant. JS it's going to contain as the name suggests
+15:05
+constants which is also going to con take contain the specific dialogues and
+15:10
+the scaling constants Etc and then finally we need the
+15:19
+utils file which is going to contain a few functions that just to make our code
+15:25
+look nicer so in this this project it should not take too much too long compared to my previous
+15:31
+projects so yeah you don't if you could have made everything in just M.S if you
+15:37
+want it all right so now in the public folder is actually where we're going to store our assets what I need you to
+15:46
+store is the font monogram. ttf you're going to find this in the link in the
+15:52
+description of this video if you're an early member of the yeah if you if
+15:59
+you're watching this in Early Access you should have also a link I'm either going to drop it in the post or in the actual
+16:07
+video so you should uh it should be obvious where to get it and now we're
+16:14
+also going to need the Sprite sheet that we're going to use for this project this is the the Sprite sheet uh the link is
+16:20
+in the description as uh as with the text and then uh finally we're going to
+16:28
+use an external program called tiled to draw our Maps but for now let's just keep keep those two things and then in
+16:37
+main.js let's actually start writing our code so I'm going to import K uh the the
+Loading assets
+16:44
+the context from Kaboom and here the first thing we're going to do is use the load Sprite
+16:52
+function it's a function that allows us to load a an image as a Sprite and then
+16:57
+we can specify a bunch of frames so here I'm giving it the name of sprite sheet
+17:04
+and the second param should be the path where to find it and it's going to be Sprite
+17:10
+sheet.png now the reason this is just SL spray.png PNG despite the fact that it's
+17:17
+in the public folder so normally you would think that it would be do slash and then public SL spreadsheet the way V
+17:26
+works is that you can assume that everything that is in the public folder can be directly accessed uh like that so
+17:34
+this is something specific to V now the third Pam is going to contain a bunch of
+17:40
+properties that tells Kaboom how to slice the image into various frames the
+17:45
+first two properties is is the slice X so how many frames are on the xaxis here
+17:52
+39 how did I come up with this number I just counted I just counted the number of frames the the the number of frames
+17:59
+here you could do that with tiled as well uh to give you the the
+18:05
+number um and then this is something you should know so for example each of those
+18:10
+is in is a a each frame in this image is a 16 by 16
+18:16
+tile and that means you can know roughly like if you take the the length of the
+18:22
+image which is here 624 and then you divide it by 16 you're
+18:29
+going to get the number of tiles of frames that are going to be on the x-axis so you can manually calculate it
+18:36
+with math all right slice Y is going to again describe the number of frames
+18:43
+there are in the Y AIS the same logic can be used to calculate it so knowing
+18:49
+that every frame is 16 by 16 this is the way this Sprite sheet is designed you
+18:54
+can just take uh look at the height of the image the properties or or here in
+19:00
+vs code on the bottom right corner and you divide that number by 16 and you get
+19:07
+the number of frames all right now here comes an interesting part it's
+19:14
+called the anims property and here it's where you define you hook up specific names to specific
+19:23
+animations so here the idle down animation for our character it's
+19:29
+just going to be one frame and it's going to be frame number 536 now how did I discover this it's by
+How to use Tiled to draw maps
+19:37
+using a program called til this program is called tiled and I think it's actually a good time to
+19:45
+um create our Maps basically create our map and while setting things up we going
+19:52
+to see how I figured out but just to be quick you click here on the frame
+19:59
+you want and then you get the ID so the number of that frame now let's assume
+20:04
+you don't have any knowledge of til so install til by using the link in the
+20:10
+description once you have it you should have this editor let's assume you have a new project so I'm just going to create
+20:16
+a new map and then let's um I don't remember the dimensions I
+20:23
+I've used but don't touch anything here except specify the width as 16 pixel the height the height as 16 pixel as well as
+20:31
+for the map size make it fixed and then take these numbers by default all right we have the the map
+20:38
+here now another thing you can do because if you're using til on a wide
+20:44
+monitor for example things might not be clear so you go to edit preferences and
+20:51
+then in interface uh actually it's in theme you you you check use custom interface font
+20:58
+and then you can select a specific font and then increase the font size this is useful for for you to be able to clearly
+21:06
+read things once you have this in the map you
+21:12
+can go to I think it was map properties actually maybe not World um okay in
+21:22
+view snapping no snapping for this project uh if you clicked on snapping snap to Grid
+21:30
+it's going to make sure that everything fits into a grid uh pattern uh I think
+21:35
+for tiles it's in Grid uh pattern regardless but if for the collisions box
+21:42
+we're going to draw we want to find more fine grain controls so that's why I dis
+21:47
+activated it for this project okay now add a new tile set to
+21:53
+the right okay now browse where you've put the the Sprite sheet in your project
+22:00
+and Link it here so this is it so for the the path should be here and then
+22:06
+this is specific to me so for you if depends on where you put it the actual
+22:11
+project and then just don't touch anything the tile width and tile height should be 16 by 16 pixels and then hit
+22:20
+okay and now you have the the spreadsheet so a good thing right now is would be to save the map so go to the
+22:28
+the file save as and then name it map. Json and put it in the public folder of
+22:34
+your project all right so you can see that I've named it map. Json this is the name I want you to to use and it's going
+22:42
+to basically create a Json file in your public folder so if I minimize this and go here you can see that we have map.
+22:51
+Json this is important because this is how we're going to know where to draw the hitboxes and where to draw certain
+22:57
+things so if I go back to tiled for now we only care about knowing how I figured
+23:03
+out the 936 so here it is 936 comes from the end
+23:10
+as you click on the various other tiles you can see the various numbers that this is how you can know which frame is
+23:16
+which okay now I'm not going to copy paste H I'm not going to write the code
+23:23
+for this all the animations we're going to use by hand it's going to take too much time so I'm just going to copy and
+23:29
+paste it here so here we have the idle down animation which is just one frame with
+23:35
+the walk down the walk down animations so how do you specify animations with more than one frame in Kaboom JZ you use
+23:42
+this uh an object you pass in an object with the from property which is the starting frame the two property which is
+23:49
+the finishing frame and whatever or not you want to Loop this is not mandatory because by default looping is false but
+23:56
+we want the animation to Loop always and we decide when to stop it and when you
+24:02
+cancel it and then the speed is the frame rate so here eight frames per
+24:07
+second for this so we have four frames in this animation so a speed of eight is what
+24:14
+looked good so if I go back to title again you can see one two 3 and four
+24:20
+this is how you know this is how I knew it was for animations uh for frames
+24:25
+sorry and then here it's the same thing but with the various uh different
+24:31
+directions so here for the side sideways we only need to have one of them I think
+24:37
+we're using the the right one by default yep and we we're just going to flip it
+24:43
+over when we need to make the character look left all right so now that that this is
+24:50
+done I think we can just start uh drawing the map so I'm going to open
+24:56
+tile again now here I really want to have the same
+25:02
+thing but um yeah this is always a diff difficult part of the project where I
+25:07
+just want to copy um the map layout instead of doing it manually but just to
+25:12
+teach you so what what I'm going to do is I'm going to teach you how to make a
+25:18
+water down like very simple version of this map and then you just take my map. Json file here and you use it uh so the
+25:27
+the map Json file that I used in the project in the actual project is going to be in the description and this is
+25:35
+just a u tutorial version that you can just swap out so this is this is just to
+25:41
+teach you how to use til so once this is done I'm just going to use the actual real map. Json instead of writing the
+25:49
+code as if anyway all right you get the point so just to teach you uh the way
+25:54
+you draw things so let's have okay the way layers works so I'm
+25:59
+just going to this is just a small crash course on titled how to draw maps and yeah so by default you have things
+26:07
+called tile layers so tile layers are layers that contain tiles that you can
+26:13
+draw there's another type of layer called the object layer which contains Collision boxes or spawn points which is
+26:20
+basically needed to to know where to set where the collisions are Etc so let's
+26:27
+let's say we have this first layer called Ground so you decide on the name and
+26:33
+depending on the name the the result in Json file that you save is going to contain those those names so you can
+26:40
+know which layer is which so here let's say I draw the ground like
+26:47
+that so I drew a couple of tiles everything looks great now if you want
+26:53
+you click on this button to add a new layer let's say I add another layer and
+26:58
+I'm I'm just going to call it plants or uh
+27:03
+props and then I can draw on top of it like
+27:09
+that and that's basically it that's how you draw a map in kabo uh not kabo in
+27:15
+tile now when you want to to add collisions what you do is you create an object layer call it for example
+27:23
+boundaries and then here at the top you can have access to those shapes and then here for example a square let's say I
+27:30
+want the player not to be able to escape outside the um the this little square so I can do
+27:39
+here and then draw a grid like that here it's often better to have the snapping
+27:46
+set to snap the grid if I do that it's going to be very easy to make
+27:52
+perfect Pixel Perfect uh collisions uh yeah boundaries
+27:59
+but now if I go back to here snapping and no snapping and I want to draw for
+28:06
+example for this tree this specific shape and then this specific shape so
+28:13
+you have more fine grain control and now this doesn't do anything on its own it's
+28:19
+it's just for you to know that hey there's this layer called Boundaries and it's going to be an object layer and
+28:24
+this is what and when you're using an object layer each object you create in
+28:30
+that layer is going to have the XY coordinates and the width and its height so you can know what to draw what to
+28:37
+where to draw the hit boxes when you're working in Kaboom or in JavaScript you don't you don't have to use Kaboom to
+28:43
+use tile by the way now the other thing I want to uh talk about and it doesn't
+28:51
+have to be a separate layer but let's say we create a separate layer and I'm going to call it spawn point
+29:00
+uh not not spawn point what is this name anyway spawn
+29:05
+point and then here you can use this pin and when you place it it's going to
+29:11
+basically create a coordinate that you can use as a way to know where to spawn the player for example or NPCs or mobs
+29:18
+Etc so this is how til works so once you you're ready with this you just save it
+29:24
+now another thing I want to uh showcase is that this is not enough uh what we want so this is something
+29:31
+specific to Kaboom so usually by default it's better to draw normally in a in
+29:36
+JavaScript or in any like programming language it's better like it should be more efficient to draw the frames tile
+29:44
+by tile instead of like having a an image that contains all the tiles but in Kaboom chz it's different in the sense
+29:51
+that it is more performant and easier to maintain if you just go to your child
+29:58
+editor and do export as an image so what this is going to do it's going to
+30:05
+combine all of your tiles here as a single image so if I and only include
+30:10
+visible layers so before doing any anything like that you need to make the spawn point and the object and the B
+30:17
+boundaries layer invisible otherwise it's going to appear in your project and
+30:22
+then you save and then you go to file export as image and then you export only include
+30:29
+the the visible layer you don't touch any of that thing uh those things and then
+30:35
+export now here if I go in my code edor you're going to notice you're going to understand so map you see all the image
+30:42
+is baked as a single one so so here we go now this would be inefficient or less
+30:50
+efficient in other um other libraries Etc but with Kaboom because it when you
+30:58
+create new tiles you create new game objects it can be uh because game objects in kabon Jaz you create things
+31:05
+called game objects which are are your usually your player your tiles anything and when you do that it is performant
+31:12
+intensive because every game object has a few components those components do speci do some Stuff Etc so a way to get
+31:20
+around that not have to do this or pay the the performance tax that comes with it there are many ways you can adopt the
+31:27
+simplest one is just to bake your image uh to take your tiles and just combine
+31:33
+them into a single PNG and just draw that as is now the tiled export is still
+31:38
+useful because in tiled you're going to have this map. Json and then for layers that aren't tiles you get the object
+31:45
+layer and the position of the hit boxes which is still valuable information you're going to need to draw the the
+31:53
+headit boxes in your map otherwise the other option would be to use the on draw function in Kaboom JS
+32:00
+to draw the tile specifically without having to create a new game object and but it's just more complicated for for
+32:08
+it it's a better alternative but it's just more complicated and for this
+32:13
+project I just opted with just taking a single image using a single image yeah okay I
+32:19
+think I've teach uh I've taught you any uh everything important related to how
+32:25
+to draw things in kab in tiled and Etc now what we're going to do is I'm going
+32:31
+to swap the files here I have the map. Json map.png with the actual Maps so you
+32:40
+can see actually one thing I realize now is never mind we you still need the
+32:46
+Sprite sheet.png because it contains our character and the characters are character sprites are directly pulled uh
+32:53
+from that image from Kaboom uh from that image are pulled the Sprite character so
+32:59
+Kaboom still needs that but for the map for the all the other ties so you could theoretically remove everything else and
+33:07
+just keep that and it would have been more efficient considering that when you're making a web game going you have
+33:13
+to see how much uh data you're you're you're sending but those image are
+33:18
+already very small anyway because it's pixel art okay so
+33:24
+I'm going to swap my images uh my map
+33:29
+and my Json file with the one I originally
+33:35
+used and now if I go and look at the map. PNG you can see like the exact same map and if you look at the map. Json you
+33:42
+can see the various tiles so let's take some time to explore how uh tiled what
+33:51
+the map. Json what the tile export is contains so the things that are the
+33:57
+thing that is very important is the layers property so til exports with a
+34:02
+bunch of properties Mo most of which are useless uh for our purposes but the one
+34:09
+that is useful is the layers property so if the layer is a tile layer it's going
+34:14
+to contain the data property and it's an array containing the frame number that
+34:23
+needs to be displayed zero is the absence of a frame
+34:29
+for object layers though it's different they don't have the the data uh property
+34:35
+what they have instead is the objects property which is an array containing every object that you've draw that
+34:43
+you've drawn in this layer so the most important stuff is the X and Y
+34:49
+coordinates and the width and the height of that object so this is useful for the
+34:54
+boundaries all right so we have our map. Json everything is fine now let's load
+35:00
+our um oh just one thing I want to to mention as well if you want to add to a
+35:07
+boundary so this is often something you want to do you click here to uh to
+35:14
+select an existing uh object when you are on the
+35:19
+object layer this this little icon ignore this message for now and then you
+35:25
+can modify the width and height Etc but you can also here in the properties tab add a name let's say I want this
+35:32
+boundary to be to have a specific name let's say wall and when the player hits this H
+35:40
+hits this we're going to know that hey it was a wall so you can use the name
+35:46
+the data you pass here in Kaboom Jaz to know what the player is colliding with
+35:51
+so now I'm just going to close this it's no longer necessary I'm just going to discard it and go back to my original so
+35:57
+so here is a bunch of uh objects that I've named uh
+36:04
+specifically like CS degree PC sofa table player TV exit Etc and for each of
+36:11
+those we're going to have a different dialogue
+36:16
+appear okay so let's go back to main and in main we're going to what going to do
+Writing logic to display map
+36:24
+next is to import the actual map Sprite Which is a single
+36:32
+PNG image now that we have baked it into a PNG instead of drawing every tile
+36:39
+separately and then for the background the way you can set the background in cabun is using the set background
+36:46
+function if you use this though you need to pass in a color and the way you can pass colors either via RGB or you can
+36:54
+use the color class and the from heex method to specify a hexa decimal value
+37:01
+the heximal value going to use for this project is 300 11
+37:08
+047 and now if I run the project so let's run it going to open up the
+37:16
+terminal type in npm run Dev and then once you do
+37:23
+that you can have click on Local Host and you should have your canvas so here
+37:32
+we haven't done anything yet and things aren't looking great so we're going to
+37:37
+have to change the the width uh of the div containing the canvas so that it
+37:43
+takes the full screen so you know what let's do this um before actually writing the code
+37:51
+Etc so let's go back to our index.html and in style tag going to add
+37:59
+a couple of style styles so for the um
+38:04
+for the app div so here take the ID and then we're
+38:11
+going to specify a font a width of
+38:17
+100% so it takes the full width of the page a height
+38:23
+of 100% as well 10% 100
+38:28
+%. and then overflow hidden so that scroll bars do not appear ever we don't
+38:34
+want scroll bar to appear in this project how you look at the result you can see that the canvas takes the whole
+38:43
+Space okay now let's go back to main.js and then
+38:49
+create our first scene which is going to contain or all of a code for that specific scene I just want to make sure
+38:55
+that um for this project because we don't have multiple different scenes it isn't needed to create a scene but I
+39:02
+just want to show you how it's done in Kaboom JZ so to create a scene so to create a scene you use the
+39:11
+k. scene function you give it a name I'm
+39:17
+going to call it Main and then what comes after is a function which is going
+39:22
+to be the code that is going to run for that scene so here is where you you draw
+39:28
+um you write your logic for that scene but before do doing any of that you need
+39:33
+to specify using the K.O function what is the default scene
+39:39
+so by default the game starts it goes to to the entrypoint main.js it loads the
+39:45
+various assets set the background color defines the scene and then go to that main
+39:52
+scene now here this function we passed here is going to we're going to need to
+39:58
+have it as an async function the reason for that is because we're going to need
+40:04
+to get the map. Json data and for that we're going to use a fetch call so const
+40:10
+map data is going to be a constant I'm going to name to basically get the the
+40:17
+map. Json data we need in our JavaScript project so here I'm going to use await
+40:23
+await fetch which is a default web browser API I'm going to to explain everything in an
+40:31
+instant and then here. Json so here in one line first we await
+40:37
+the fetch function because it is asynchronous that means that uh if you
+40:42
+were to not use await then your code the rest of the code would continue to execute so let's say I have some logic
+40:49
+here it would continue to run uh while fetch is still ongoing we don't want
+40:55
+that we want to load the map data and not move not move the rest of the code
+41:01
+here un until it's done that's why we await it so basically waiting it and
+41:06
+then once we do that we also need to convert it into a Json uh object and for
+41:13
+that we need to use the Json function which is also as synchronous Json method
+41:19
+which is also asynchronous that's why we need also to await so that we don't move uh to the next line of code before it's
+41:28
+done so once map data is done and ready we move on to the next things so here
+41:35
+I'm just going to create another constant called layers and I'm going to extract from map data the layers
+41:40
+property so if we look at the map. Json file you can see that the properties
+41:48
+that one of them was layers and this is really what we care about that's why we only we create a constant just this is
+41:55
+just for it to look cleaner you don't have to you didn't have to create a constant to get it but
+42:02
+yeah and then here we're going to create our first game object which is going to
+42:07
+be our map so in kabon Jaz a game object can be basically
+42:12
+everything uh players props Etc uh what what is a game object exactly it's um
+42:20
+it's an object that contains different components those components can be POS positions area a body or a specific
+42:29
+Sprite and the way Kaboom works is that by passing in an array of components you
+42:35
+specify behaviors for your your uh game objects so it's a basically an entity
+42:41
+component system I think so how do you how do you create a game object there are many ways uh
+42:47
+actually two the first one is the make function which allows you to create the game object but not display it on the
+42:54
+screen the add function adds it to the scene so either you have a choice either
+42:59
+you make it and then later on you have to call the k. add function and pass in
+43:04
+the game object like that or you use the add function from the get-go and pass in
+43:09
+your array of components here so for the map what components are we going to need
+43:15
+we're going to need to uh this the Sprite component to display the the
+43:21
+Sprite the actual map the way we do this is simply by using the Sprite component
+43:26
+which is offered by Kaboom and passing it the key for the Sprite you want to display we specified the key in the load
+43:33
+Sprite function for the Sprite uh for the image map.png that's why that's how
+43:39
+Kaboom is able to know in advance where what to display actually
+43:46
+now the next component we're going to add is the positional component and it specifies the position
+43:53
+that the game object will have on the screen when it is displayed and here it
+43:58
+is zero well it's not necessarily only when it is displayed just the position that
+44:05
+you could have regardless if it's if it is displayed or not and then if you use
+44:11
+the add function then it's going to to draw it in that spe in that specific
+44:17
+place and then finally we're going to need the scale component and we want to
+44:24
+scale up our map because it it's pixel art it's small and we want it to be a
+44:30
+bigger so a good practice I'm going to do is in the constant. JS I'm going to
+44:36
+create a constant exportable constant I'm going to call it scale factor and
+44:42
+I'm going to set it to four so we want to increase it four times and then in main.js I'm just going to use that scale
+44:49
+factor constant and call it so it should automatically
+44:54
+import the scale factor constant in case it doesn't add this at the top of your
+45:01
+file all right now the next game object we're going to create is the actual
+Creating the player
+45:06
+player and for that I'm going to create a constant I'm going to call it player
+45:12
+I'm again going going to use the make function here and the Sprites we're going to pass
+45:19
+is the Sprite sheet itself but with a default animation this
+45:26
+is something you can do when you have imported a a Sprite that has many frames
+45:31
+so a Sprite sheet you have access to this second pram where you can specify a
+45:37
+default animation and here it's going to be idle down now the
+45:46
+second so the second component we're going to need is the area component this
+45:52
+creates a hitbox for our player automatically
+45:58
+and within you can add so uh it's not very visible so I'm just going to format
+46:04
+this myself and then explain so the k. area component allows you to create a
+46:11
+hitbox automatically for your player for your game object but you can specify
+46:17
+things within by passing in an object with the following properties you can specify which collisions you want this
+46:24
+game object so the player game object to ignore and I want to actually this is not necessary we don't need
+46:31
+that this because in the in the project I I did it a different way uh initially
+46:38
+but then then I found a better way which doesn't require to really need that at
+46:44
+all but what we do need is to specify a shape so by default it creates a shape
+46:49
+that is roughly the shape of your Sprite but sometimes you want really to control
+46:56
+the shape of your hitbox exactly and the way you do that is by passing in an
+47:02
+object with a shape property and then use for example k. rect which is going
+47:07
+to create a rectangle and then the first param is the position which is the vector two my
+47:13
+Vector 2 is X and Y coordinates and you can specify here the vector 2 is going
+47:18
+to be 03 so we want the hitbox to be drawn
+47:23
+from the origin and then plus three on the xaxis from the origin of the player itself so
+47:30
+the area is going to be slightly placed slightly differently than the Sprite itself so that um the head the hbox I is
+47:39
+positioned properly and for example the the player doesn't look like they're sinking in a platform or something like
+47:46
+that so this is something you have to play with yourself to determine which um
+47:53
+which values are the best and now the second and third third params are the
+47:58
+width and height of that uh hitbox I'm going to go with 101 it says on purpose
+48:04
+smaller than the player Sprite Which should be 16 by 16 now k. body make sure uh is another
+48:13
+component that actually makes our player a tangible physics object that is can be
+48:19
+collided with and yeah that's basically it it's done automatically by kaboom
+48:27
+now we can also use the anchor component to draw the player from the center
+48:34
+instead of from the top left corner so this um the way things are drawn by
+48:39
+default is that the X and Y coordinates are actually the coordinates of the T top left corner of the object you want
+48:46
+to draw if you don't want that you want the X coord X and Y coordinates correspond to the origin you do uh you
+48:53
+use the K do uh k. an anchor and then specify which so from the center now
+49:01
+it's not the X and Y coordinates that are in the wrong position it's the the where the image is drawn from so that's
+49:07
+something so for example uh yeah so the player instead of
+49:12
+being drawn from the top left corner where the top left corner of that image
+49:18
+will be the x and y coordinate of that player it's going to be the center drawn
+49:23
+from the center so feel free to try and change the values or just try without
+49:28
+and and then hit F the F1 key to open to the debug mode in KJS and then you can
+49:34
+see the difference all right now we need a k
+49:39
+position component uh we aren't going to specify a specific position now we're going to do this later when we're
+49:45
+getting the data from our map we going to use this spawn point so here if I go back to tiled you can see I created a
+49:51
+layer in the original called uh spawn points and it's just this little pin
+49:56
+with the name player which determines where to spawn so if I click on it here
+50:02
+you can see I've decided on this name I just wrote it here and then it's going to give us the X and Y coordinates so so
+50:09
+we're going to know where to place the
+50:14
+player all right uh another thing we need to do is to scale the Sprite for the player because for now it's going to
+50:20
+be small it's going to be a 16 by 16 and we want it to be at least the same let
+50:25
+scale the same as the map so that everything looks
+50:30
+right and then finally well not finally but we have what comes next is in Kaboom
+50:38
+JS if you want to hold properties for that game object you can pass in in your
+50:44
+array of components a an object and then do put whatever properties you want and
+50:51
+then they're going to be accessible directly by doing for example player. speed if I create this speed property
+50:57
+here and I'm going to put it to 250 I'm also going to create a direction
+51:04
+property is going to be useful to know which animation to play by default it is down and then is in
+51:13
+dialogue uh property which is initially is false so what why we want this is
+51:19
+that when the player is a is in dialogue that means that the text box is displaying text we don't we want to
+51:25
+prevent the from being able to move or do anything except read the text and click on the close
+51:34
+button all right uh the last thing we're going to add to that game object is the player uh tag so the way actually I'm
+51:42
+not sure it's going to actually be useful for this project but I'm just going to add it for now it's when you want to check for collisions if you give
+51:50
+a tag to your game object you can then use the on Collide function to know okay
+51:55
+this collided with that a tag and that means to run this type of logic so it's
+52:02
+a way to identify your game object all right so if I look at the
+52:09
+result nothing yet of course because we haven't put anything now that we have the player Etc let's write the logic for
+Writing logic to display boundaries
+52:16
+actually displaying the boundaries and then as we write this we're going to write everything else we
+52:23
+need okay so so here we need a for Loop
+52:28
+which is going to iterate through the various layers we had
+52:34
+here and then depending on the layer so if the layer do
+52:43
+name equal equal boundaries so if we are on the
+52:50
+boundaries layer how do I know this it's by looking at the map. Json export and
+52:57
+then here you can have for each layer you have a name key the name key this is how you know which name a layer has if
+53:06
+they have any all right so if I go back to main I have the layer name equal equal
+53:14
+boundaries and then if I we going to need a for Loop which is going to
+53:21
+iterate through all the boundaries of layer do objects remember that when
+53:29
+you're dealing with an object layer which is the case for the boundaries they have access to the
+53:35
+objects property which is an array containing all the objects in that layer and the objects in that layer are just
+53:41
+objects with x y and width and height properties as well and now here we use the map object
+53:49
+and then we add another game object to it so we can have child game objects by
+53:54
+taking an existing game object and using the add function method on it so what I'm going to do here is I'm just going
+54:01
+to copy and paste it it's going to be faster and then I'm going to talk over the
+54:07
+code so we have an area component with a specific shaped shapes that corresponds
+54:13
+to the width and height of the boundary itself this comes from tiled and from the tiled export in map. Json you see
+54:20
+each object has a width and a height uh this uh maybe we created this
+54:27
+needlessly because the width is zero and the okay never mind anyway so you have
+54:32
+your objects from here and then I specify the spe specific
+54:40
+shape we want which is a rectangle and you can do this by calling the wct
+54:45
+making a new instance of the W class and then here you have as the
+54:53
+first param the the coordinates of that hitbox relative to the game object we're
+54:58
+creating we're just going to pass in an empty Vector that means we want the rectangle here to be at the same
+55:05
+position as the overall game object so yeah the child game object
+55:11
+because it's different then the there's the position of the game object itself and then there's the position of the the
+55:19
+hitbox so the area for that game object and here by setting the vector two to
+55:24
+being zero that means we have the ex exact same uh game object uh game
+55:29
+position sorry and then finally we add the body tag this is important so that
+55:34
+we can add the is static property what it does it it basically makes sure that
+55:41
+the only way uh that means that the player will not be able to pass over it
+55:47
+so it's going to be really stuck and that's uh yeah it's going to be U how do
+55:53
+I say the player will not be able to overlap and this is how you do walls in kabon jazz and then finally we pass in
+55:59
+the name of the object which was defined in in the tile export this uh gives us
+56:07
+the tag it's going to act as the tag of the game object is how we're going to be able to identify what the game object is
+56:13
+what the boundary is and this is going to come in handy later on because we're going to be able
+56:19
+to know what to do when the player collides with it now that we have this right below
+56:27
+if the boundary name of that specific uh
+56:33
+boundary that we just created in kabj so this we're just taking the name
+56:38
+out of the tile expert because we want to do something different so if uh we want to actually here set the on
+56:45
+collision events so if the player we have the on Collide method on the player
+56:50
+because we use the area component when creating the player
+56:57
+we're going to do boundary. name so the first param of the
+57:02
+uncollided method is the tag of the second game object you want to check
+57:07
+collisions with we want to check the collisions of the player with this game object with the following tag which is
+57:14
+boundary. name and then here we have a function
+57:19
+that that is going to run as the second param when yeah so it's going to run when
+57:26
+there is a when the Collision occurs and here we're going to set the
+57:32
+player property is in dialogue to being false uh true actually so that we're
+57:37
+going to later on be able to prevent the player from moving while the text box is
+57:43
+being displayed and then here we're going to write a this is actually where we're
+57:50
+going to write the dialogue display the dialogue sorry so
+57:55
+is dialogue is here it's from here and then now if I go
+58:01
+to so let's put it to do here to do and let's go to ut. JS and in there
+Writing logic to display dialogue
+58:10
+we're going to create a new function that is going to take care of displaying
+58:15
+the dialogue so export function display
+58:21
+dialogue and then the first par is going to be the text and on display and is
+58:27
+going to be a method we're going to pass
+58:33
+whoops a function sorry that that is going to run when the text is finished
+58:38
+displayed so we need two things we need to get the
+58:45
+dialogue UI which is basically the textbox container so I'm going to do
+58:50
+document. getet element by ID and then text box text box box
+58:58
+container all right once this is done uh let me look if I we have it
+59:03
+actually the markup for it we don't so let's go first create the markup for it in h in
+59:10
+HTML so here we're going to have first of all
+59:16
+inside of the div the UI div we're going to have a P
+59:21
+tag that P tag is going to have the class of note we're going to later on create the
+59:28
+CSS for it and basically it's just an instruction to tap and click around to
+59:36
+move now that we have that I'm going to create a div within and this is going to
+59:42
+be our actual dialogue UI so I'm going to give it an ID of
+59:48
+textbox container and then the Styles here we're
+59:54
+going to actually this is not a really good practice to do if you are in uh
+1:00:00
+making a website but I'm going to use the style tag here for a specific thing for the
+1:00:05
+display setting the display to being none you could have just created an ID
+1:00:11
+here um a selector here but I'm going to because I'm going to change this through
+1:00:18
+JavaScript I'm going to use this but actually I think you could just use a I think class list or something like that
+1:00:25
+to so I create a class and then I remove it but you know for for this project I'm
+1:00:33
+just not going to bother with that okay so now I'm going to create another div
+1:00:39
+from within this div is going to
+1:00:45
+whoops so let me do this uh maybe I should increase the font size a bit more
+1:00:51
+Yep so the div here is going
+1:00:57
+to have the class of button actually text box it's going to
+1:01:04
+actually be the text box itself and from within I'm going to have a P tag that is going to contain the
+1:01:10
+text and I'm going to give it the ID of dialogue and then for the going to have
+1:01:17
+a class for it as well which is going to be UI text and later on I'm going to fill
+1:01:23
+those in right below we're going to have another
+1:01:29
+div and then a button the div is going to have a class
+1:01:36
+of button container this is so we can create a container where the button is always going to be on the right side of
+1:01:42
+the screen I'm going to give an ID to this button to being the close button
+1:01:47
+when the player wants to close the text the text box I'm going to give it the class of UI close button
+1:01:56
+now let's write the dcss for it as well since we're here I'm going to load
+1:02:03
+our font font so in kabj you can load the font if you want to display it via
+1:02:09
+canvas but because we're displaying via HTML the text I'm just going to use the
+1:02:15
+CSS for it so font family monogram that's the name of the font and then the
+1:02:20
+source for the font is URL and then it's monogram.
+1:02:26
+ttf and now it should be able to find it out here in the public
+1:02:32
+folder okay now the body tag let's style the body tag as
+1:02:37
+well this is just going to set the font family for all of the body tag to being
+1:02:45
+to using monogram or as a fallback you're just going to use monospace so
+1:02:50
+mono space is a font that should be already in your browser by default the font size by
+1:02:56
+default is going to be two two REM so two REM one REM is basically the the
+1:03:03
+size of the font uh of your browser said by default in at the root so usually it
+1:03:10
+says 16 pixels and then you can decide you can zoom in and zoom out in your browser control so it takes the so here
+1:03:17
+it takes the the the font size and multiplies by two so two times the font of your
+1:03:23
+browser so that it will adapt it going it's going to be responsive by
+1:03:28
+default and then here I'm going to do overflow hidden so here instead of
+1:03:35
+having overflow hidden here I'm just going to put it in the body so that the scroll bars don't
+1:03:40
+appear and then in however in the app selector all of this is going to have a
+1:03:46
+position of relative this is so we can position it precisely with X left and by
+1:03:53
+specifying the left and the top left and the right and bottom Etc so that we
+1:03:59
+can it's going to how how do I say it it's going to leave the document flow
+1:04:06
+and we're going to have much more Gran granular control of where to put it it's like if you would put an element on the
+1:04:12
+canvas you really control the X and Y position of that uh element you put in the canvas so this is basically a way to
+1:04:19
+achieve the same thing in Kaboom JS uh in CSS sorry now let's
+1:04:27
+add for our wait a minute we have the text box I
+1:04:33
+don't think this is I made a mistake this should be an ID and not a class and
+1:04:40
+now below here we're going to have the class of
+1:04:48
+text box uh the ID sorry of text box the selector for it and here by precise by
+1:04:54
+uh specifying position absolute this is where you actually get the full control of where to put it by using the left
+1:05:02
+property uh I'm going to put 10% the right at 10% as well so it's going to
+1:05:10
+look good I'm going to put the bottom at two view height so it takes the view height
+1:05:18
+and then it's it's a measure a measurement relative to the view height so it it's going to adapt regardless of
+1:05:24
+the um of the the screen of the
+1:05:30
+user the minimum height we're going to need is 10 view
+1:05:36
+height this is what looked good this is for the text box you're going to see an instant when we'll see the result the
+1:05:42
+background so this is the color of the text box let's put it white the okay so we have the background
+1:05:50
+the Border radius I'm just going to put three pixels it doesn't matter
+1:05:57
+the outline style is going to be black or solid is it the color
+1:06:05
+solid the padding is going to be one ram as I explained Ram is based on the font
+1:06:11
+size of your browser and it makes it responsive
+1:06:19
+basically and then what do I need display Flex we're
+1:06:25
+going to create cre a flex container now this is some CSS knowledge I would I assume that you have it you have this
+1:06:31
+knowledge already if you don't read up on Flex containers there are plenty of great articles and posts online
+1:06:38
+explaining everything so we're going to have display flex and then a flex direction
+1:06:45
+of column so so the children of our Flex container are going to be positioned in
+1:06:50
+the column we're going to set the flex wrap to being to wrapping so that when
+1:06:56
+there's no space it moves on to the next row we're going to justify the content
+1:07:02
+to being Flex start this is so that um the text
+1:07:10
+within the uh the text box starts at the top left
+1:07:17
+corner uh align items as well I'm going to do Flex
+1:07:22
+start um I think I'm I always mess up the justify content and align items one
+1:07:31
+if is for the the axis for which the the content is
+1:07:37
+flowing and the other one is for the cross AIS so for both of those case we want it to do start at Flex start which
+1:07:44
+means it's a top left top left and and uh yes so it's top left
+1:07:53
+basically and then play with the those values as you you're going to see how
+1:07:58
+they are affected then word spacing word
+1:08:05
+spacing is going to be 0.2 remm this what looked good so word spacing is
+1:08:11
+self-explanatory so the the words appearing in the text box and then here we're going to have a little drop shadow
+1:08:18
+so we're going to have a filter and then a drop
+1:08:23
+shadow with the following arguments um REM and then a color RGB so
+1:08:33
+this is really took straight from the mdn documentation with just a bit of
+1:08:40
+tweaking in terms of colors yeah I don't really know maybe
+1:08:45
+there's some explanations here yeah you have uh drop shadow
+1:08:53
+here so here it is explained the where are the pams where are
+1:09:00
+they um it does it explain okay okay it's in French by the way anyway you're
+1:09:07
+going to figure it out uh by just looking at the docs mdn docs type in drop shadow CSS you going to
+1:09:16
+understand all right now the UI
+1:09:21
+text class going to have a margin of zero
+1:09:26
+and then user select none this is important so that the player cannot
+1:09:31
+select the text and have highlight it like that usually you don't do that in a
+1:09:39
+game and then finally you have uh actually there's
+1:09:45
+two there's a couple of selector to Define so UI close
+1:09:54
+button I'm just just going to copy what what's left it's not much and
+1:09:59
+I'm going to go over it so UI close button uses this font family
+1:10:08
+uh for some reason you need to specify this otherwise it uses it doesn't use the font and I'm not sure why border
+1:10:15
+style none border radius three pixels some padding and then it it should it
+1:10:21
+should inherit the font size actually maybe you could do inher par it here as well and should
+1:10:27
+work and then button container it's going to align itself at the end of the
+1:10:33
+text box so that the the buttons always going to be appear appear at the top right corner and then the note is going
+1:10:40
+to be again position absolute is going to be at the top left corner so left and then top one VH display Flex Flex
+1:10:47
+Direction column Etc and then this is the color of the text it's going to be have that color yeah I save everything
+1:10:56
+look at the result you can see that here you have tap click around to move here
+1:11:02
+it doesn't matter if you can select or not but for the text box we don't want
+1:11:07
+you to be able to select text actually you know what let's also put it as user
+1:11:14
+select none just to make sure that it looks like a
+1:11:21
+game and that's it uh if I now try to select I can not you see all right now
+1:11:27
+we have this we can simply go back to our .js and write the rest of the logic
+1:11:33
+we had here so we need the following so I'm just going to
+1:11:41
+copy and paste that here so we get the text box container we
+1:11:47
+get the dialogue so the dialogue is actually the P tag here where we
+1:11:52
+actually put the dialogue in and then what what we're going to do is we're
+1:11:57
+going to set the the display so initially remember in our markup I said
+1:12:03
+I put style display none this is to make all of this Invisible by default when we
+1:12:10
+want to show the dialogue we can use the style attribute here and set the display to being block and this is going to make
+1:12:18
+the the textbox container visible so which by extension means that
+1:12:25
+the dialogue box is going to appear and the text is going to be visible now we're going to implement
+1:12:32
+text scrolling and this is very simple in HTML you this is the code for it so I
+1:12:39
+created an index which I set to zero and then the current text is going to contain the text we're going to add to
+1:12:46
+the element the the the inner HTML here of the dialogue box now inner HTML is
+1:12:53
+not really recommended to use because you can be victim of cross site
+1:12:58
+scripting so here in this our particular case it doesn't matter because we're not
+1:13:04
+accepting user input input so it should be safe to not to use in our HTML and
+1:13:11
+it's kind of required because when we want to have our dialogue box you're going to have sometimes the text that
+1:13:17
+appears with links to your GitHub or things like that as attributes Stag and
+1:13:23
+if we were to use inner text for for example then those uh attributes that we pass the the yeah the links are not
+1:13:31
+going to be rendered as links and will not be clickable so here we use the set
+1:13:37
+interval function in JavaScript this is something that is basic like vanilla JavaScript and every 5 Seconds uh it's
+1:13:45
+going to run this the the function here we put a reference to that interval uh
+1:13:51
+that set interval event so that we can cancel it clear the interval when we're done with it and then as long as the
+1:13:58
+index is inferior to the text. length so text. length is the text that we pass
+1:14:03
+here then we take our current text we append the specific character at that
+1:14:10
+specific index of the text and then we put it all in the inner inner
+1:14:17
+HTML and uh yep and then we do index Plus+ and then we skip this until
+1:14:25
+this the condition is no longer true and then we clear and that's basically it
+1:14:30
+now we need to write the logic to um have the onclose button so the when
+1:14:36
+the button needs to be closed to do something like that I'm going to put this outside but still in the display
+1:14:44
+dialogue function if I paste you have we get the
+1:14:49
+close button by using a simple get element by ID and then
+1:14:55
+I create this function called on close button click it's going to call the on display and function this is a useful
+1:15:03
+because we in this function going to set the player uh is in dialogue attribute
+1:15:10
+to being false without having to pass the player to this method this function
+1:15:15
+so this a handy way of using an out passing a function from the outside that does has access to player the player
+1:15:22
+object so that we don't have to add a third param here and it doesn't make
+1:15:27
+sense really why would you need the player to display the dialogue so that makes a much more sense and it's much
+1:15:34
+more extensible for example if you want to do other behaviors when the display is over
+1:15:41
+and and then here the dialogue UI install display we put it back to none so that the dialogue section of the UI
+1:15:48
+is going to be invisible we set the inner HTML back to being empty empty
+1:15:53
+this you could have used inner text it doesn't matter and then we clear the interval if it's not yet the case and
+1:16:00
+then we close we remove the event listener because we're going to add it so we remove the function itself within
+1:16:06
+the function so it's recursive so here we have at the end we
+1:16:13
+create the event listener when the when there is a click and then it runs this
+1:16:18
+and then it removes itself as the event listener so so that's it
+1:16:25
+now if we go back to main.js we can here in the to-do
+Spawning the player + player movement logic
+1:16:33
+section have player um not player call the
+1:16:39
+display dialogue functions going to import it automatically actually it should automatically import it from the
+1:16:46
+utils file and then here I'm going to pass the dialog data
+1:16:55
+so here for now let's put test or to-do that's our text that we're going to
+1:17:02
+display and then here we're going to have a
+1:17:09
+function and this function actually just its role is just
+1:17:15
+to set the player is in dialogue to being false so that the
+1:17:21
+player can move again and yeah so look at the code
+1:17:29
+here and that's it so if I think I have it I Collapse
+1:17:41
+this and then if however so we should probably put a continue at the end so
+1:17:49
+here after all of this we continue that means we skip to the next situation
+1:17:54
+ation of the for Loop and then
+1:18:00
+here if the layer oops the layer.
+1:18:05
+name is the spawn points well the spawn points layer which
+1:18:12
+is where the the the player spawns we're just going to have
+1:18:20
+four con entity of layer. objects there's just one entity but I'm writing
+1:18:26
+the code to be generalizable so that if you decide to put more than one entity in the tille export it's going to still
+1:18:33
+work and then so if entity. name
+1:18:39
+is equal equal to the player so this is going to be the player so that's this is
+1:18:46
+the name I'm going to put player. position because I added the positional component
+1:18:53
+when created creating the player game object despite having set it up to
+1:18:59
+nothing I can access the attribute position and set it manually after
+1:19:04
+having created the game object and here I'm going to use a vector 2 which is just the x and y coordinate and the
+1:19:10
+position we're going to use though it's going to be very specific it's going to be whoops not what I wanted to
+1:19:19
+yeah so we're going to take the position of the x coordinate of the map you do
+1:19:24
+this by accessing the pause property and then the x coordinate and then I'm going to add the entity dox which it tells us
+1:19:31
+where to place the player and we multiply this by the scale factor because remember we we're basically multiplying everything by four so that
+1:19:38
+everything is nicely visible and big enough same logic for the
+1:19:43
+y-coordinate and then finally here we use the add function in Kaboom to add the player game object we created in the
+1:19:51
+scene and then here you can continue or doesn't matter because we only have like
+1:19:57
+two layers or anyway so now that we have all of this it's time to I'm going just
+1:20:04
+going to collapse all this section we're done with it and then here I'm going to um I think
+1:20:12
+that's uh let right just some code to make the camera follow the player so by
+1:20:18
+default in cabun you have the camera object already created you can call the gam cam pause so the camer system
+1:20:26
+already exists you can just control it so I'm going to take the player world position the reason we using World
+1:20:33
+position instead um actually doesn't matter
+1:20:38
+really because we haven't created the player as a child object so so if you're
+1:20:43
+using if you're creating a game object as part of a child of another game object you use World position to convert
+1:20:51
+the its position to being the position of the in the actual canvas and not relative to the
+1:20:57
+parent so here I'm going to use player. pause.
+1:21:03
+x and then player. doy plus an offset of 100 so this campuse is going to set the
+1:21:11
+camera position to being this in the x coordinate and this in the y-coordinate now if I look at the
+1:21:18
+result okay I have the character but uh the map is not appearing I'm wondering
+1:21:26
+why actually why is the map not appearing is it doing everything
+1:21:32
+right um wait a minute so if I go back to the
+1:21:38
+top where we created the map we have okay I haven't added it to the to the
+1:21:44
+canvas but you know what because we're doesn't matter let's use add instead to immediately add it to the the
+1:21:52
+canvas and here we go the map is displayed if I press F1 you
+1:21:57
+can see all the the collisions and for the specific objects you're going to have TV sofa table PC resume project
+1:22:07
+exit Etc now the player cannot move so let's fix
+1:22:14
+that and then uh also we're going to need to add some other stuff like uh setting the camera scale so depending on
+1:22:21
+if the player is using a small screen or a big screen we want to make the the camera zoom a bit or not to
+1:22:32
+compensate so here um so let's actually write the logic for moving the player so
+1:22:40
+I'm going to use the k. on Mouse down so because this is a very simple project
+1:22:46
+compared to other tutorials I made I'm not going to write those methods inside
+1:22:52
+of the player let's just use the on and take the the player game object directly here and yep so when on
+1:23:03
+Mouse down is an event in Kaboom JS it takes in a function and it will pass
+1:23:09
+to it the mouse button that is currently being pressed on mobile it's just going
+1:23:15
+to consider a tap basically and then here if the mouse button is not equal to
+1:23:24
+the left M Mouse click or the player is
+1:23:29
+in dialogue then we return early that means we do nothing we don't
+1:23:36
+move and this makes sense because we don't want to allow the player to move
+1:23:41
+when a right click is pressed instead of the a left click because if they press both at the same time they're going to
+1:23:46
+move twice as fast it doesn't really matter because it's not a game we're building really but just so you know and
+1:23:54
+here if the player is in dialogue of course we don't want to allow the player move to move while they are in dialogue
+1:24:00
+we want them to focus on the dialogue okay now for movement we're going to
+1:24:09
+need the following snippet of code so let me just
+1:24:21
+okay so that's all there is to it when it comes to mov we need the world Mouse position that
+1:24:27
+means because we're using the camera the mouse position is going to be really um
+1:24:34
+according to the canvas and not according to the world the world can be much bigger than the canvas because the
+1:24:41
+world is much more than what is visible by the camera and when you drag around
+1:24:48
+this uh what happens is that if you use the k. Mouse pause the mouse position
+1:24:53
+directly you're going to at some point get stuck I wrote a Blog Post article on my
+1:24:59
+substack link is in the description so feel free to read read it to get a better understanding and by the way
+1:25:06
+subscribe to my sub if you want uh for more like written content yep so the
+1:25:14
+only thing we need now to move the player is to use the move to function that is available on the player because
+1:25:20
+we have the I think the area component the body component I think because because of the body component so some
+1:25:26
+certain methods in Kaboom JS are only accessible once you have added certain components when creating that game
+1:25:32
+object so the first param is which what is the target position you want and we
+1:25:37
+want the world Mouse position so we want the player to move towards this at the specific speed and here we just get the
+1:25:44
+speed from the player which we defined here all right now if I look at the
+1:25:50
+result we should be able to move and here we go and then you can see we Collide and then Todo there's nothing
+1:25:57
+that appears and then Todo again Todo we
+1:26:03
+haven't written the content but that's almost all there is to it you know the next step is really to code the
+1:26:11
+direction various directions so make the player face different direction scaling
+1:26:17
+the camera according to the the device being used the the resolution otherwise
+1:26:22
+sometimes it's too big and becomes too big and actually putting the content
+1:26:29
+inside of those text box and that should be it so now let's actually write the
+Writing logic for scaling the camera + animations + dialogue text
+1:26:35
+logic for scaling the camera and then we'll write the logic for the directions
+1:26:41
+and then we'll add a text hopefully that order so here for the camera scaling I'm
+1:26:47
+just going to in the .js we're going to create another function right below
+1:26:54
+export function set cam scale and then here we
+1:27:00
+just pass the context so we can know we can compute how much we need to scale so
+1:27:06
+here I'm going to create a constant I'm going to call it resize factor and it's going to have access to
+1:27:14
+the width of the canvas you can have access to the width of the canvas by calling the width method on the Kaboom
+1:27:21
+context and the height um as well and then we have this division
+1:27:27
+to get a factor and then if the resize factor is inferior to one that means we
+1:27:35
+will simply set the cam scale cam scale this is a kaboom method
+1:27:42
+to being just one uh you can also do two VC one which is just going to set it to
+1:27:48
+one uh otherwise an lse statement you could either have an lse statement or if
+1:27:54
+if you want to be fancy you can and more clear you can have an early
+1:28:00
+return and then here right below you can have k. cam SC
+1:28:05
+scale cam scale and then k. Vector 2 and
+1:28:11
+we increase the scaling so we Zoom by 1.5 in both X and Y uh Transformations
+1:28:17
+so 1.5 all right so now we have this I'm going to go back to main and and where
+1:28:24
+we're going to call it is we're going to call this function first in in two occasions the first one at the beginning
+1:28:32
+we just do set cam scale and then K and also every time we resize the
+1:28:40
+cvas so you can know when this happens by using the on resize Kaboom uh
+1:28:48
+method which takes in a function that that is going to run when this occurs
+1:28:54
+and then you just can call the set cam scale and then pass in the context
+1:29:01
+here so let's look at the result so here you can see everything is
+1:29:07
+much better and then as you decrease the
+1:29:13
+thing it's uh smaller I think or is it that's uh let's take an iPhone SE and
+1:29:21
+then let's uh yeah it seems to relatively work maybe I'm not sure let's
+1:29:32
+gradually yeah all right yeah so it's it does yeah it does change okay sounds
+1:29:39
+good now what we need is to basically display the correct animations and
+1:29:45
+Sprite depending on the direction so what I'm going to do to be able to know when the player should be facing left or
+1:29:52
+right or any of those uh angles is to first store the mouse
+1:29:59
+angle which is just going to be the angle between the player so you can do
+1:30:06
+that by using the angle method of the position of the vector of the position
+1:30:13
+of the player so player. pause. angle gives you this and then you can pass in the world Mouse position and it's going
+1:30:21
+to be give you the angle between and with that I'm going to first specify a lower
+1:30:27
+bound which is going to be 50 and a um upper
+1:30:34
+bound which is going to be um 125 going to see in an instant why
+1:30:42
+we need this and then we have our if statement so here I'm just going to copy and paste and talk over it so first
+1:30:49
+condition if the mouse angle is superior to the lower bound and inferior to the
+1:30:55
+upper bound and the current animation isn't walk up then we will play the walk
+1:31:01
+up animation and set the player direction to be up if I look at the result it's when the mouse is here
+1:31:07
+imagine that you had a circle and then here if your mouse is within a certain
+1:31:15
+range actually for now you're not going to see the difference so let's say my mouse the angle here and here so you're
+1:31:21
+on the circle as long as my my mouse is still within those position the up
+1:31:27
+animation is still going going to play however if my mouse exceeds for example
+1:31:33
+here we shouldn't now this is not very clear for now but let's add the conditions and then you'll
+1:31:40
+see so now what comes next is the for the down animation so it's it's the same
+1:31:48
+thing with negatives instead so now if I run and look at the result if my mouse
+1:31:55
+is here and I click Mouse down the up animation is going to play if I my mouse
+1:32:00
+is here the down animation is going to play now if I do whoops okay let's whoops okay let's say
+1:32:08
+I'm I'm here so if I do this and then I change you see it dynamically change as
+1:32:14
+long as I hold the mouse because now the the mouse position is within those upper
+1:32:19
+and lower bounds of the this imaginary circle in terms of angle
+1:32:25
+so now I'm just going to add the two other
+1:32:31
+conditions this is for the left and right then here right
+1:32:38
+below so for the right it's we take the absolute value of
+1:32:44
+the mouse angle and as long as it's superior to the upper bound we flip the
+1:32:50
+player X to being false this the flip X X is useful because we only have one animation for
+1:32:57
+the walking it's called walk side and by default it faces to the right that means
+1:33:02
+that if the player was flipped uh mainly because of the other animations where we do flip so for the left side then we put
+1:33:09
+it back to false so that the the player looks at the correct direction and then here the same thing but with flip X
+1:33:16
+being true instead and uh as long as the mouse angle is inferior to the lower B
+1:33:23
+down the absolute value so we don't care about whether or not it's negative or positive Etc so this is so it works on
+1:33:30
+both sides of the circle the imaginary Circle so now if I look at the result
+1:33:36
+you see and you can have directional
+1:33:41
+movement like that now you see that the animations of the the player never stops right uh the way to go about that is to
+1:33:49
+use the uh on Mouse release method in Kaboom JZ I'm going to paste it right
+1:33:57
+below so here let's a let me collapse everything here and yeah on Mouse release if the
+1:34:05
+direction is down we put idle down if the direction is up we put idled up and
+1:34:11
+if uh it's neither then we put the idle side and because we flipped we fli the
+1:34:17
+player uh it's going to point towards the correct direction by default we don't need to do anything so if I look
+1:34:24
+here I do this here you go
+1:34:31
+then like that and then I hold I release sorry I release the mouse and then the
+1:34:38
+player stops and uh basic that's basically it now the only thing is really the content
+1:34:44
+here and what we're going to do here for that is I'm going to go back to where we
+1:34:51
+I think it was here when instead of having to do we're going to hold the content of our dialogue inside of an a
+1:35:01
+constant I'm going to just call a dialog data uh let me just look it up so I'm going to copy and paste it and just
+1:35:07
+explain to you the the how how it works and then you don't have to use the same
+1:35:13
+text so here you have a dialogue data object with keys that corresponds to the
+1:35:20
+tag of the boundary so for the PC you have this text and then you can see me
+1:35:25
+using the a tag here to have links Etc as if it were
+1:35:31
+HTML and now here in main.js instead of doing this what you do is just you you
+1:35:38
+get the dialog data constant from the constant file so it should import it automatically otherwise do it manually
+1:35:46
+here here it is and then here you just pass in the boundary name to corre uh
+1:35:52
+select the correct text to display and that's basically it the project is done if I go here and I go
+1:36:01
+here if you want to exit J Legends portfolio just close the the tab and then here that's my TV I've been
+1:36:07
+watching Tech YouTubers a lot recently the primagen Theo pirate software milky
+1:36:13
+Etc and then here that's my sofa I like to relax and Etc and then you get the
+1:36:19
+point so if I open up the um
+1:36:24
+the uh debug mode you can see when there is the PC key here those are the name of
+1:36:30
+the various boundaries and this is how we we use them them to as keys for our dialogue data so here for example this
+1:36:38
+is my Dex my desk on it is my resume check it out and then it's a link with an a tag so here if I go here the a tag
+1:36:46
+where is it uh constant you can see uh the link to my resume Etc so this is
+1:36:53
+your free don't don't just copy what I wrote here write your own dialogues to tailor it to your uh your
+1:37:02
+yourself basically and that's basically it thanks for watching this tutorial hope it was uh something that you you
+1:37:10
+like to to learn about and uh yeah thanks for watching feel free to subscribe for more content related to
+1:37:16
+game development uh specifically JavaScript or web related game development but hopefully not only maybe
+1:37:23
+I'll try try to do other types of uh development uh or with other Stacks so
+1:37:30
+maybe making games with Lua or some stuff like that in the future so yeah feel free to subscribe and share this
+1:37:36
+video if you found found it useful all right thanks for watching bye
+

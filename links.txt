@@ -1,0 +1,6 @@
+https://github.com/JSLegendDev/2d-portfolio-kaboom
+https://jslegenddev.github.io/portfolio/
+Map files (map.json + map.png):https://github.com/JSLegendDev/2d-portfolio-kaboom/tree/master/public
+Spritesheet: https://github.com/JSLegendDev/2d-portfolio-kaboom/blob/master/public/spritesheet.png
+Fonts: https://datagoblin.itch.io/monogram
+Tiled software: https://mapeditor.org
