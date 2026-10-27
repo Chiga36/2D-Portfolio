@@ -1,6 +1,11 @@
 import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
-import { displayDialogue, setCamScale } from "./utils";
+import {
+  addRoomC,
+  displayDialogue,
+  setCamScale,
+  updateRoomBackground,
+} from "./utils";
 
 k.loadSprite("spritesheet", "./spritesheet.png", {
   sliceX: 39,
@@ -16,8 +21,12 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 });
 
 k.loadSprite("map", "./map.png");
+k.loadSprite("room-c", "./room-c.png");
+k.loadSprite("plant-pot", "./plant-pot.png");
 
-k.setBackground(k.Color.fromHex("#311047"));
+// Kaboom's setBackground(color, alpha) does `alpha && (bgAlpha = alpha)`,
+// so passing a literal 0 is falsy and silently keeps the default opaque alpha.
+k.setBackground(k.Color.fromHex("#311047"), 0.001);
 
 const welcomeScreen = document.getElementById("welcome-screen");
 let gameStarted = false;
@@ -37,6 +46,7 @@ k.scene("main", async () => {
   const layers = mapData.layers;
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
+  addRoomC(k, map);
 
   const player = k.make([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -101,6 +111,7 @@ k.scene("main", async () => {
 
   k.onUpdate(() => {
     k.camPos(player.worldPos().x, player.worldPos().y);
+    updateRoomBackground(player.pos.x, player.pos.y);
   });
 
   const maxDt = 1 / 60;
@@ -126,10 +137,10 @@ k.scene("main", async () => {
     if (!gameStarted || player.isInDialogue) return;
 
     const keyMap = [
-      k.isKeyDown("d"),
-      k.isKeyDown("a"),
-      k.isKeyDown("w"),
-      k.isKeyDown("s"),
+      k.isKeyDown("d") || k.isKeyDown("right"),
+      k.isKeyDown("a") || k.isKeyDown("left"),
+      k.isKeyDown("w") || k.isKeyDown("up"),
+      k.isKeyDown("s") || k.isKeyDown("down"),
     ];
 
     const nbOfKeyPressed = keyMap.filter(Boolean).length;
