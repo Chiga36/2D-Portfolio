@@ -141,7 +141,10 @@ export function setCamScale(k) {
 }
 
 export function addRoomC(k, map) {
-  map.add([k.sprite("room-c"), k.pos(224, 176)]);
+  // room-c.png has a 3px transparent margin baked in on the left/right/bottom
+  // (so its border-outline wraps all the way around); shift the sprite left
+  // by that margin so the drawn room still lines up with the wall colliders below.
+  map.add([k.sprite("room-c"), k.pos(221, 176)]);
 
   const walls = [
     { x: 224, y: 216, w: 40, h: 16 }, // room top wall, left of doorway
