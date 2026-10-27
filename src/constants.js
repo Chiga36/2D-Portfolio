@@ -28,4 +28,5 @@ export const dialogueData = {
     PyTorch, RAG & ChromaDB, React, Next.js, FastAPI, Supabase, AWS, Docker, Git, and MLOps tools like DVC and
     MLflow.`,
   exit: `If you want to exit my portfolio, just close the tab. Thanks for stopping by!`,
+  dustbin: `That's my dustbin. This is where all my bad code, failed builds, and 3am debugging regrets go to die.`,
 };

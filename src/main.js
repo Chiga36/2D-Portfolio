@@ -1,9 +1,16 @@
 import { dialogueData, scaleFactor } from "./constants";
 import { k } from "./kaboomCtx";
 import {
+  addDustbin,
   addRoomC,
+  addWorldLabel,
   displayDialogue,
+  getLabelText,
+  LABEL_OUTLINE_OFFSETS,
+  markExplored,
+  playInteractSound,
   setCamScale,
+  updateExploreStatus,
   updateRoomBackground,
 } from "./utils";
 
@@ -23,6 +30,7 @@ k.loadSprite("spritesheet", "./spritesheet.png", {
 k.loadSprite("map", "./map.png");
 k.loadSprite("room-c", "./room-c.png");
 k.loadSprite("plant-pot", "./plant-pot.png");
+k.loadSprite("dustbin", "./dustbin.png");
 
 // Kaboom's setBackground(color, alpha) does `alpha && (bgAlpha = alpha)`,
 // so passing a literal 0 is falsy and silently keeps the default opaque alpha.
@@ -31,15 +39,90 @@ k.setBackground(k.Color.fromHex("#311047"), 0.001);
 const welcomeScreen = document.getElementById("welcome-screen");
 let gameStarted = false;
 
+const bgm = document.getElementById("bgm");
+const musicToggle = document.getElementById("music-toggle");
+const skipIntroBtn = document.getElementById("skip-intro");
+let musicEnabled = localStorage.getItem("musicEnabled") !== "false";
+
+function applyMusicState() {
+  musicToggle.textContent = musicEnabled ? "\u{1F50A}" : "\u{1F507}";
+  musicToggle.setAttribute("aria-pressed", String(musicEnabled));
+  if (musicEnabled) {
+    bgm.play().catch(() => {});
+  } else {
+    bgm.pause();
+  }
+}
+
+musicToggle.addEventListener("click", () => {
+  musicEnabled = !musicEnabled;
+  localStorage.setItem("musicEnabled", String(musicEnabled));
+  applyMusicState();
+});
+applyMusicState();
+
 function startGame() {
   if (gameStarted) return;
   gameStarted = true;
   welcomeScreen.style.display = "none";
   document.getElementById("game").focus();
+  skipIntroBtn.style.display = "flex";
+  if (musicEnabled) bgm.play().catch(() => {});
 }
 
 welcomeScreen.addEventListener("click", startGame);
 window.addEventListener("keydown", startGame, { once: true });
+
+function enterMain() {
+  skipIntroBtn.style.display = "none";
+  document.getElementById("app").classList.remove("intro-active");
+  document.getElementById("explore-status").style.display = "block";
+  updateExploreStatus();
+  k.go("main");
+}
+
+k.scene("intro", () => {
+  const introPlayer = k.add([
+    k.sprite("spritesheet", { anim: "walk-down" }),
+    k.anchor("center"),
+    k.pos(k.width() / 2, k.height() / 2 - 60),
+    k.scale(10),
+    k.fixed(),
+  ]);
+  introPlayer.play("walk-down");
+
+  k.add([
+    k.rect(Math.min(620, k.width() - 40), 100, { radius: 10 }),
+    k.anchor("center"),
+    k.pos(k.width() / 2, k.height() / 2 + 170),
+    k.color(k.Color.fromHex("#2d1b4d")),
+    k.opacity(0.6),
+    k.fixed(),
+  ]);
+
+  k.add([
+    k.text("Hi, my name is Chirag\nand this is my portfolio", {
+      size: 28,
+      align: "center",
+      width: k.width() - 80,
+    }),
+    k.anchor("center"),
+    k.pos(k.width() / 2, k.height() / 2 + 170),
+    k.color(255, 255, 255),
+    k.fixed(),
+  ]);
+
+  let introFinished = false;
+  function finishIntro() {
+    if (!gameStarted || introFinished) return;
+    introFinished = true;
+    enterMain();
+  }
+
+  k.wait(4.5, finishIntro);
+  k.onKeyPress("escape", finishIntro);
+  skipIntroBtn.onclick = finishIntro;
+});
 
 k.scene("main", async () => {
   const mapData = await (await fetch("./map.json")).json();
@@ -47,6 +130,7 @@ k.scene("main", async () => {
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
   addRoomC(k, map);
+  addDustbin(k, map);
 
   const player = k.make([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -80,11 +164,24 @@ k.scene("main", async () => {
         if (boundary.name) {
           player.onCollide(boundary.name, () => {
             player.isInDialogue = true;
+            playInteractSound();
+            markExplored(boundary.name);
             displayDialogue(
               dialogueData[boundary.name],
               () => (player.isInDialogue = false),
             );
           });
+
+          const labelText = getLabelText(boundary.name);
+          if (labelText) {
+            addWorldLabel(
+              k,
+              map,
+              boundary.x + boundary.width / 2,
+              boundary.y,
+              labelText,
+            );
+          }
         }
       }
 
@@ -104,6 +201,37 @@ k.scene("main", async () => {
     }
   }
 
+  player.onCollide("dustbin", () => {
+    player.isInDialogue = true;
+    playInteractSound();
+    markExplored("dustbin");
+    displayDialogue(
+      dialogueData.dustbin,
+      () => (player.isInDialogue = false),
+    );
+  });
+
+  const PLAYER_LABEL_OFFSET = -40;
+  const playerLabelOutline = LABEL_OUTLINE_OFFSETS.map(([dx, dy]) =>
+    k.add([
+      k.text("Chirag", { size: 14 }),
+      k.anchor("bot"),
+      k.pos(
+        player.worldPos().x + dx,
+        player.worldPos().y + PLAYER_LABEL_OFFSET + dy,
+      ),
+      k.color(0, 0, 0),
+      k.z(100),
+    ]),
+  );
+  const playerLabel = k.add([
+    k.text("Chirag", { size: 14 }),
+    k.anchor("bot"),
+    k.pos(player.worldPos().x, player.worldPos().y + PLAYER_LABEL_OFFSET),
+    k.color(255, 255, 255),
+    k.z(101),
+  ]);
+
   setCamScale(k);
   k.onResize(() => {
     setCamScale(k);
@@ -112,6 +240,14 @@ k.scene("main", async () => {
   k.onUpdate(() => {
     k.camPos(player.worldPos().x, player.worldPos().y);
     updateRoomBackground(player.pos.x, player.pos.y);
+
+    const labelX = player.worldPos().x;
+    const labelY = player.worldPos().y + PLAYER_LABEL_OFFSET;
+    playerLabel.pos = k.vec2(labelX, labelY);
+    playerLabelOutline.forEach((t, i) => {
+      const [dx, dy] = LABEL_OUTLINE_OFFSETS[i];
+      t.pos = k.vec2(labelX + dx, labelY + dy);
+    });
   });
 
   const maxDt = 1 / 60;
@@ -181,4 +317,4 @@ k.scene("main", async () => {
   });
 });
 
-k.go("main");
+k.go("intro");
