@@ -42,6 +42,10 @@ export const pcSections = [
         heading: "GenAI Intern - KPMG",
         text: "Built an interactive mode for creating custom AI agents.",
       },
+      {
+        heading: "GenAI Analyst - KPMG",
+        text: "Building Generative applications for the Clients.",
+      },
     ],
   },
   {
