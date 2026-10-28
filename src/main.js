@@ -3,10 +3,12 @@ import { k } from "./kaboomCtx";
 import {
   addDustbin,
   addRoomC,
-  addWorldLabel,
+  addWorldLabels,
+  createGlow,
+  createLabelBox,
   displayDialogue,
   getLabelText,
-  LABEL_OUTLINE_OFFSETS,
+  isExplored,
   markExplored,
   playInteractSound,
   setCamScale,
@@ -60,6 +62,13 @@ musicToggle.addEventListener("click", () => {
   applyMusicState();
 });
 applyMusicState();
+
+const exploreStatusEl = document.getElementById("explore-status");
+const exploreToggle = document.getElementById("explore-toggle");
+exploreToggle.addEventListener("click", () => {
+  const open = exploreStatusEl.classList.toggle("open");
+  exploreToggle.setAttribute("aria-expanded", String(open));
+});
 
 function startGame() {
   if (gameStarted) return;
@@ -129,8 +138,8 @@ k.scene("main", async () => {
   const layers = mapData.layers;
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
-  addRoomC(k, map);
-  addDustbin(k, map);
+  const { exitGlow } = addRoomC(k, map);
+  const dustbinGlow = addDustbin(k, map);
 
   const player = k.make([
     k.sprite("spritesheet", { anim: "idle-down" }),
@@ -149,6 +158,49 @@ k.scene("main", async () => {
     "player",
   ]);
 
+  // Once an object has been seen, re-touching it doesn't reopen the dialogue
+  // right away: it just glows, and the player confirms with Enter. Only one
+  // object can be "pending" at a time.
+  let pendingInteraction = null;
+  const interactHint = document.getElementById("interact-hint");
+
+  function openObjectDialogue(name) {
+    player.isInDialogue = true;
+    playInteractSound();
+    displayDialogue(dialogueData[name], () => (player.isInDialogue = false));
+  }
+
+  function handleObjectCollide(name, glow) {
+    if (player.isInDialogue) return;
+    if (!isExplored(name)) {
+      markExplored(name);
+      openObjectDialogue(name);
+      return;
+    }
+    pendingInteraction = { name, glow };
+    glow.activate();
+    interactHint.style.display = "block";
+  }
+
+  function handleObjectCollideEnd(name, glow) {
+    if (pendingInteraction && pendingInteraction.name === name) {
+      glow.deactivate();
+      pendingInteraction = null;
+      interactHint.style.display = "none";
+    }
+  }
+
+  k.onKeyPress("enter", () => {
+    if (!pendingInteraction || player.isInDialogue) return;
+    const { name, glow } = pendingInteraction;
+    glow.deactivate();
+    pendingInteraction = null;
+    interactHint.style.display = "none";
+    openObjectDialogue(name);
+  });
+
+  const labelRequests = [];
+
   for (const layer of layers) {
     if (layer.name === "boundaries") {
       for (const boundary of layer.objects) {
@@ -162,25 +214,28 @@ k.scene("main", async () => {
         ]);
 
         if (boundary.name) {
-          player.onCollide(boundary.name, () => {
-            player.isInDialogue = true;
-            playInteractSound();
-            markExplored(boundary.name);
-            displayDialogue(
-              dialogueData[boundary.name],
-              () => (player.isInDialogue = false),
-            );
-          });
+          const glow = createGlow(
+            k,
+            map,
+            boundary.x,
+            boundary.y,
+            boundary.width,
+            boundary.height,
+          );
+          player.onCollide(boundary.name, () =>
+            handleObjectCollide(boundary.name, glow),
+          );
+          player.onCollideEnd(boundary.name, () =>
+            handleObjectCollideEnd(boundary.name, glow),
+          );
 
           const labelText = getLabelText(boundary.name);
           if (labelText) {
-            addWorldLabel(
-              k,
-              map,
-              boundary.x + boundary.width / 2,
-              boundary.y,
-              labelText,
-            );
+            labelRequests.push({
+              localX: boundary.x + boundary.width / 2,
+              localY: boundary.y,
+              text: labelText,
+            });
           }
         }
       }
@@ -201,36 +256,22 @@ k.scene("main", async () => {
     }
   }
 
-  player.onCollide("dustbin", () => {
-    player.isInDialogue = true;
-    playInteractSound();
-    markExplored("dustbin");
-    displayDialogue(
-      dialogueData.dustbin,
-      () => (player.isInDialogue = false),
-    );
-  });
+  addWorldLabels(k, map, labelRequests);
+
+  player.onCollide("dustbin", () => handleObjectCollide("dustbin", dustbinGlow));
+  player.onCollideEnd("dustbin", () =>
+    handleObjectCollideEnd("dustbin", dustbinGlow),
+  );
+
+  player.onCollide("exit", () => handleObjectCollide("exit", exitGlow));
+  player.onCollideEnd("exit", () => handleObjectCollideEnd("exit", exitGlow));
 
   const PLAYER_LABEL_OFFSET = -40;
-  const playerLabelOutline = LABEL_OUTLINE_OFFSETS.map(([dx, dy]) =>
-    k.add([
-      k.text("Chirag", { size: 14 }),
-      k.anchor("bot"),
-      k.pos(
-        player.worldPos().x + dx,
-        player.worldPos().y + PLAYER_LABEL_OFFSET + dy,
-      ),
-      k.color(0, 0, 0),
-      k.z(100),
-    ]),
+  const playerLabelBox = createLabelBox(k, "Chirag");
+  playerLabelBox.setPos(
+    player.worldPos().x,
+    player.worldPos().y + PLAYER_LABEL_OFFSET,
   );
-  const playerLabel = k.add([
-    k.text("Chirag", { size: 14 }),
-    k.anchor("bot"),
-    k.pos(player.worldPos().x, player.worldPos().y + PLAYER_LABEL_OFFSET),
-    k.color(255, 255, 255),
-    k.z(101),
-  ]);
 
   setCamScale(k);
   k.onResize(() => {
@@ -241,13 +282,10 @@ k.scene("main", async () => {
     k.camPos(player.worldPos().x, player.worldPos().y);
     updateRoomBackground(player.pos.x, player.pos.y);
 
-    const labelX = player.worldPos().x;
-    const labelY = player.worldPos().y + PLAYER_LABEL_OFFSET;
-    playerLabel.pos = k.vec2(labelX, labelY);
-    playerLabelOutline.forEach((t, i) => {
-      const [dx, dy] = LABEL_OUTLINE_OFFSETS[i];
-      t.pos = k.vec2(labelX + dx, labelY + dy);
-    });
+    playerLabelBox.setPos(
+      player.worldPos().x,
+      player.worldPos().y + PLAYER_LABEL_OFFSET,
+    );
   });
 
   const maxDt = 1 / 60;

@@ -93,7 +93,7 @@
                 {
                  "height":16,
                  "id":2,
-                 "name":"exit",
+                 "name":"welcome-gate",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -313,14 +313,14 @@
                 {
                  "height":10.375,
                  "id":33,
-                 "name":"resume",
+                 "name":"resume-projects",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":14.25,
+                 "width":28.0625,
                  "x":225.53125,
                  "y":80.0625
-                }, 
+                },
                 {
                  "height":7.03125,
                  "id":34,
@@ -331,17 +331,6 @@
                  "width":11.75,
                  "x":274.125,
                  "y":80.125
-                }, 
-                {
-                 "height":9.90625,
-                 "id":35,
-                 "name":"projects",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":13.25,
-                 "x":240.34375,
-                 "y":80.25
                 }],
          "opacity":1,
          "type":"objectgroup",

@@ -144,14 +144,82 @@
         top: 1.25rem;
         left: 1.25rem;
         z-index: 5;
+        user-select: none;
+      }
+
+      #explore-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
         margin: 0;
         background: #fdecc8;
         border: 3px solid #8a5a2a;
         border-radius: 10px;
         padding: 0.5rem 1rem;
+        font-family: monogram, monospace;
         font-size: 1.4rem;
         color: #4a2f1a;
-        user-select: none;
+        cursor: pointer;
+      }
+
+      #explore-arrow {
+        font-size: 1.1rem;
+        transition: transform 0.2s ease;
+      }
+
+      #explore-status.open #explore-arrow {
+        transform: rotate(180deg);
+      }
+
+      #explore-list {
+        display: none;
+        list-style: none;
+        margin: 0.4rem 0 0;
+        padding: 0.5rem 0.75rem;
+        background: #fdecc8;
+        border: 3px solid #8a5a2a;
+        border-radius: 10px;
+        max-height: 42vh;
+        min-width: 15rem;
+        overflow-y: auto;
+        font-size: 1.2rem;
+        color: #4a2f1a;
+      }
+
+      #explore-status.open #explore-list {
+        display: block;
+      }
+
+      #explore-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.2rem 0;
+        white-space: nowrap;
+      }
+
+      #explore-list .explore-check {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.3rem;
+        height: 1.3rem;
+        flex-shrink: 0;
+        border: 2px solid #8a5a2a;
+        border-radius: 4px;
+        background: #fff8e8;
+        font-size: 1rem;
+        line-height: 1;
+      }
+
+      #explore-list li.done .explore-check {
+        background: #8a5a2a;
+        color: #fdecc8;
+      }
+
+      #explore-list li.done .explore-label {
+        text-decoration: line-through;
+        opacity: 0.6;
       }
 
       #music-toggle {
@@ -172,6 +240,34 @@
         font-size: 1.5rem;
         padding: 0;
         cursor: pointer;
+      }
+
+      #interact-hint {
+        position: absolute;
+        left: 50%;
+        bottom: 2rem;
+        transform: translateX(-50%);
+        z-index: 6;
+        margin: 0;
+        display: none;
+        background: #fdecc8;
+        border: 3px solid #8a5a2a;
+        border-radius: 10px;
+        padding: 0.5rem 1.1rem;
+        font-family: monogram, monospace;
+        font-size: 1.4rem;
+        color: #4a2f1a;
+        user-select: none;
+        animation: interact-hint-pulse 1s ease-in-out infinite;
+      }
+
+      @keyframes interact-hint-pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.55;
+        }
       }
 
       #skip-intro {
@@ -469,7 +565,14 @@
         </div>
       </div>
       <canvas id="game"></canvas>
-      <p id="explore-status" style="display: none">You have explored 0% about me</p>
+      <div id="explore-status" style="display: none">
+        <button id="explore-toggle" aria-expanded="false">
+          <span id="explore-text">You have explored 0% about me</span>
+          <span id="explore-arrow">&#9662;</span>
+        </button>
+        <ul id="explore-list"></ul>
+      </div>
+      <p id="interact-hint">Press Enter to interact</p>
       <audio id="bgm" src="/bgm.mp3" loop preload="auto"></audio>
       <button id="music-toggle" aria-label="Toggle music" aria-pressed="true">🔊</button>
       <button id="skip-intro" aria-label="Skip introduction">Skip (Esc) &rarr;</button>

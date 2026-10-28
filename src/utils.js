@@ -6,9 +6,9 @@ const LABEL_TEXT = {
   "sofa-table": "Sofa",
   tv: "TV",
   bed: "Bed",
-  resume: "Resume",
-  projects: "Projects",
+  "resume-projects": "Research Paper and Resume",
   library: "Library",
+  "welcome-gate": "Welcome Gate",
   exit: "Exit",
   dustbin: "Dustbin",
 };
@@ -17,47 +17,172 @@ export function getLabelText(name) {
   return LABEL_TEXT[name];
 }
 
-export const LABEL_OUTLINE_OFFSETS = [
-  [-1, -1], [0, -1], [1, -1],
-  [-1, 0], [1, 0],
-  [-1, 1], [0, 1], [1, 1],
-];
+const LABEL_SIZE = 14;
+const LABEL_BORDER_COLOR = [16, 14, 8];
+const LABEL_FILL_COLOR = [253, 236, 200];
+const LABEL_CORNER_COLOR = [217, 100, 110];
+const LABEL_TEXT_COLOR = [74, 47, 26];
+const LABEL_BORDER = 3;
+const LABEL_CORNER = 3;
+const LABEL_PAD_X = 8;
+const LABEL_PAD_Y = 5;
+
+// A small pixel-art pill box (cream fill, black border, pink corner accents)
+// used as the backing for every world-space label, matching the dialogue
+// textbox's styling. Returns a handle with setPos() so callers can either
+// place it once (static object labels) or reposition it every frame
+// (the player's name tag, which follows them around).
+export function createLabelBox(k, text) {
+  const measured = k.formatText({ text, size: LABEL_SIZE });
+  const boxW = measured.width + LABEL_PAD_X * 2;
+  const boxH = measured.height + LABEL_PAD_Y * 2;
+  const B = LABEL_BORDER;
+  const C = LABEL_CORNER;
+
+  const border = k.add([
+    k.rect(boxW, boxH, { radius: 4 }),
+    k.anchor("bot"),
+    k.pos(0, 0),
+    k.color(...LABEL_BORDER_COLOR),
+    k.z(97),
+  ]);
+  const fill = k.add([
+    k.rect(boxW - B * 2, boxH - B * 2, { radius: 2 }),
+    k.anchor("bot"),
+    k.pos(0, -B),
+    k.color(...LABEL_FILL_COLOR),
+    k.z(98),
+  ]);
+  const cornerOffsets = [
+    [-boxW / 2, -boxH],
+    [boxW / 2 - C, -boxH],
+    [-boxW / 2, -C],
+    [boxW / 2 - C, -C],
+  ];
+  const corners = cornerOffsets.map(([ox, oy]) =>
+    k.add([
+      k.rect(C, C),
+      k.pos(ox, oy),
+      k.color(...LABEL_CORNER_COLOR),
+      k.z(99),
+    ]),
+  );
+  const textEntity = k.add([
+    k.text(text, { size: LABEL_SIZE }),
+    k.anchor("bot"),
+    k.pos(0, -B - 1),
+    k.color(...LABEL_TEXT_COLOR),
+    k.z(100),
+  ]);
+
+  function setPos(worldX, worldY) {
+    border.pos = k.vec2(worldX, worldY);
+    fill.pos = k.vec2(worldX, worldY - B);
+    textEntity.pos = k.vec2(worldX, worldY - B - 1);
+    corners[0].pos = k.vec2(worldX - boxW / 2, worldY - boxH);
+    corners[1].pos = k.vec2(worldX + boxW / 2 - C, worldY - boxH);
+    corners[2].pos = k.vec2(worldX - boxW / 2, worldY - C);
+    corners[3].pos = k.vec2(worldX + boxW / 2 - C, worldY - C);
+  }
+
+  return { setPos };
+}
 
 export function addWorldLabel(k, map, localX, localY, text) {
   const worldX = (map.pos.x + localX) * scaleFactor;
   const worldY = (map.pos.y + localY) * scaleFactor;
+  const box = createLabelBox(k, text);
+  box.setPos(worldX, worldY);
+  return box;
+}
 
-  for (const [dx, dy] of LABEL_OUTLINE_OFFSETS) {
-    k.add([
-      k.text(text, { size: 14 }),
-      k.anchor("bot"),
-      k.pos(worldX + dx, worldY + dy),
-      k.color(0, 0, 0),
-      k.z(100),
-    ]);
+// Places several labels at once, nudging any that would overlap straight up
+// until they clear each other (objects placed close together, like the
+// resume/projects/library row, would otherwise draw on top of one another).
+export function addWorldLabels(k, map, requests) {
+  const GAP = 3;
+
+  const items = requests.map(({ localX, localY, text }) => {
+    const worldX = (map.pos.x + localX) * scaleFactor;
+    const naturalY = (map.pos.y + localY) * scaleFactor;
+    const measured = k.formatText({ text, size: LABEL_SIZE });
+    const boxW = measured.width + LABEL_PAD_X * 2;
+    const boxH = measured.height + LABEL_PAD_Y * 2;
+    return { text, worldX, naturalY, boxW, boxH };
+  });
+
+  const placed = [];
+  for (const item of items) {
+    let y = item.naturalY;
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const p of placed) {
+        const minDx = (item.boxW + p.boxW) / 2 + GAP;
+        if (Math.abs(item.worldX - p.worldX) >= minDx) continue;
+        const minDy = (item.boxH + p.boxH) / 2 + GAP;
+        if (Math.abs(y - p.y) < minDy) {
+          y = p.y - minDy;
+          changed = true;
+        }
+      }
+    }
+    placed.push({ ...item, y });
   }
 
-  return k.add([
-    k.text(text, { size: 14 }),
-    k.anchor("bot"),
-    k.pos(worldX, worldY),
-    k.color(255, 255, 255),
-    k.z(101),
-  ]);
+  return placed.map(({ text, worldX, y }) => {
+    const box = createLabelBox(k, text);
+    box.setPos(worldX, y);
+    return box;
+  });
 }
 
 // In-memory only: exploration progress resets whenever the app reloads/restarts.
 const visitedObjects = new Set();
 
+const NON_EXPLORABLE_KEYS = ["exit", "welcome-gate"];
+
 function getExplorableKeys() {
-  return Object.keys(dialogueData).filter((key) => key !== "exit");
+  return Object.keys(dialogueData).filter(
+    (key) => !NON_EXPLORABLE_KEYS.includes(key),
+  );
+}
+
+function buildExploreList(explorable) {
+  const listEl = document.getElementById("explore-list");
+  if (!listEl) return;
+  listEl.innerHTML = "";
+  for (const key of explorable) {
+    const li = document.createElement("li");
+    li.dataset.key = key;
+
+    const check = document.createElement("span");
+    check.className = "explore-check";
+
+    const label = document.createElement("span");
+    label.className = "explore-label";
+    label.textContent = getLabelText(key) || key;
+
+    li.append(check, label);
+    listEl.appendChild(li);
+  }
 }
 
 export function updateExploreStatus() {
   const explorable = getExplorableKeys();
   const percent = Math.round((visitedObjects.size / explorable.length) * 100);
-  const el = document.getElementById("explore-status");
-  if (el) el.textContent = `You have explored ${percent}% about me`;
+  const textEl = document.getElementById("explore-text");
+  if (textEl) textEl.textContent = `You have explored ${percent}% about me`;
+
+  const listEl = document.getElementById("explore-list");
+  if (!listEl) return;
+  if (listEl.children.length !== explorable.length) buildExploreList(explorable);
+  for (const li of listEl.children) {
+    const done = visitedObjects.has(li.dataset.key);
+    li.classList.toggle("done", done);
+    const check = li.querySelector(".explore-check");
+    if (check) check.textContent = done ? "✓" : "";
+  }
 }
 
 export function markExplored(name) {
@@ -67,6 +192,42 @@ export function markExplored(name) {
 
   visitedObjects.add(name);
   updateExploreStatus();
+}
+
+export function isExplored(name) {
+  return visitedObjects.has(name);
+}
+
+// A soft pulsing highlight overlaid on an object's trigger area, used to
+// prompt "press Enter" once an object has already been seen once (first
+// contact still opens the dialogue immediately; later contacts just glow).
+export function createGlow(k, map, x, y, w, h) {
+  const pad = 2;
+  const glow = map.add([
+    k.rect(w + pad * 2, h + pad * 2, { radius: 3 }),
+    k.pos(x - pad, y - pad),
+    k.color(255, 221, 110),
+    k.opacity(0),
+    k.z(10),
+  ]);
+
+  let active = false;
+  let t = 0;
+  glow.onUpdate(() => {
+    if (!active) return;
+    t += k.dt();
+    glow.opacity = 0.25 + 0.2 * Math.abs(Math.sin(t * 5));
+  });
+
+  return {
+    activate() {
+      active = true;
+    },
+    deactivate() {
+      active = false;
+      glow.opacity = 0;
+    },
+  };
 }
 
 let audioCtx;
@@ -147,9 +308,12 @@ export function addRoomC(k, map) {
   map.add([k.sprite("room-c"), k.pos(221, 176)]);
 
   const walls = [
+    { x: 224, y: 176, w: 40, h: 40 }, // corridor guard, left of the doorway shaft
+    { x: 296, y: 176, w: 40, h: 40 }, // corridor guard, right of the doorway shaft
     { x: 224, y: 216, w: 40, h: 16 }, // room top wall, left of doorway
     { x: 296, y: 216, w: 40, h: 16 }, // room top wall, right of doorway
-    { x: 224, y: 232, w: 8, h: 88 }, // room left wall
+    { x: 224, y: 232, w: 16, h: 28 }, // room left wall, above the exit door
+    { x: 224, y: 288, w: 16, h: 32 }, // room left wall, below the exit door
     { x: 328, y: 232, w: 8, h: 88 }, // room right wall
     { x: 224, y: 312, w: 112, h: 8 }, // room bottom wall
   ];
@@ -161,13 +325,28 @@ export function addRoomC(k, map) {
     ]);
   }
 
-  map.add([k.sprite("plant-pot"), k.pos(290, 280)]);
+  // exit door set into the widened left wall
   map.add([
-    k.area({ shape: new k.Rect(k.vec2(0), 11, 6) }),
+    k.area({ shape: new k.Rect(k.vec2(0), 14, 14) }),
     k.body({ isStatic: true }),
-    k.pos(292, 294),
+    k.pos(224, 268),
+    "exit",
   ]);
-  addWorldLabel(k, map, 298, 280, "Plant");
+  addWorldLabel(k, map, 232, 260, LABEL_TEXT.exit);
+  const exitGlow = createGlow(k, map, 224, 268, 14, 14);
+
+  // centered under the window (which sits on the top wall, map x300-332)
+  map.add([k.sprite("plant-pot"), k.pos(300, 238)]);
+  map.add([
+    // matches the sprite's full opaque bounding box so the player can't
+    // walk onto/through the foliage, only the small collider it had before
+    k.area({ shape: new k.Rect(k.vec2(0), 13, 19) }),
+    k.body({ isStatic: true }),
+    k.pos(302, 239),
+  ]);
+  addWorldLabel(k, map, 308, 238, "Plant");
+
+  return { exitGlow };
 }
 
 export function addDustbin(k, map) {
@@ -179,6 +358,7 @@ export function addDustbin(k, map) {
     "dustbin",
   ]);
   addWorldLabel(k, map, 75, 143, LABEL_TEXT.dustbin);
+  return createGlow(k, map, 73, 143, 9, 11);
 }
 
 const ROOM_THRESHOLDS = [{ room: "room-a", maxX: 800 }];
