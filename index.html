@@ -11,6 +11,11 @@
         src: url(monogram.ttf);
       }
 
+      @font-face {
+        font-family: "Ghostero";
+        src: url(/fonts/Ghostero-Demo-Lettersweet.otf) format("opentype");
+      }
+
       body {
         font-family: monogram, monospace;
         font-size: 2rem;
@@ -268,6 +273,102 @@
         50% {
           opacity: 0.55;
         }
+      }
+
+      #outro-screen {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #3fa843;
+        background-image: url("/outro-bg.png");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .outro-dot {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      #outro-title {
+        position: absolute;
+        top: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0;
+        font-family: monogram, monospace;
+        font-size: 2.2rem;
+        color: #ffcf4d;
+        text-shadow:
+          2px 2px 0 #5a3a10,
+          -2px 2px 0 #5a3a10,
+          2px -2px 0 #5a3a10,
+          -2px -2px 0 #5a3a10;
+        user-select: none;
+      }
+
+      #outro-note {
+        position: absolute;
+        z-index: 1;
+        left: 24%;
+        top: 20%;
+        width: 52%;
+        height: 58%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4%;
+        box-sizing: border-box;
+      }
+
+      #outro-note-text {
+        font-family: "Ghostero", monogram, cursive;
+        font-weight: normal;
+        font-size: 3rem;
+        line-height: 1.5;
+        color: #1a1005;
+        margin: 0;
+        white-space: pre-line;
+        text-align: left;
+      }
+
+      #outro-zombie,
+      #outro-peashooter {
+        position: absolute;
+        bottom: 3vh;
+        height: 38vh;
+        width: auto;
+        z-index: 1;
+        filter: drop-shadow(0 0.5rem 0.4rem rgba(0, 0, 0, 0.35));
+      }
+
+      #outro-zombie {
+        right: 4%;
+      }
+
+      #outro-peashooter {
+        left: 4%;
+      }
+
+      #outro-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        z-index: 2;
+        font-family: monogram, monospace;
+        font-size: 1.3rem;
+        border: 3px solid #6b4423;
+        border-radius: 8px;
+        background: #e8c877;
+        color: #6b4423;
+        padding: 0.5rem 1.25rem;
+        cursor: pointer;
       }
 
       #skip-intro {
@@ -573,6 +674,22 @@
         <ul id="explore-list"></ul>
       </div>
       <p id="interact-hint">Press Enter to interact</p>
+      <div id="outro-screen">
+        <div class="outro-dot" style="left: 8%; bottom: 6%; background: #e05a3f"></div>
+        <div class="outro-dot" style="left: 14%; bottom: 10%; background: #f4d14d"></div>
+        <div class="outro-dot" style="right: 10%; bottom: 7%; background: #f4d14d"></div>
+        <h2 id="outro-title">You found a note:</h2>
+        <div id="outro-note">
+          <p id="outro-note-text">Thank you for exploring my home!
+
+Feel free to reach out:
+LinkedIn: chiragsaha3
+Email: chigaswami@gmail.com</p>
+        </div>
+        <img id="outro-zombie" src="/zombie.png" alt="Zombie" />
+        <img id="outro-peashooter" src="/peashooter.png" alt="Peashooter" />
+        <button id="outro-close" aria-label="Close">&times; Close</button>
+      </div>
       <audio id="bgm" src="/bgm.mp3" loop preload="auto"></audio>
       <button id="music-toggle" aria-label="Toggle music" aria-pressed="true">🔊</button>
       <button id="skip-intro" aria-label="Skip introduction">Skip (Esc) &rarr;</button>

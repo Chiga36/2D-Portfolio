@@ -70,6 +70,25 @@ exploreToggle.addEventListener("click", () => {
   exploreToggle.setAttribute("aria-expanded", String(open));
 });
 
+const outroScreen = document.getElementById("outro-screen");
+const outroClose = document.getElementById("outro-close");
+
+function showOutroScreen() {
+  outroScreen.style.display = "flex";
+}
+
+function hideOutroScreen() {
+  outroScreen.style.display = "none";
+  document.getElementById("game").focus();
+}
+
+outroClose.addEventListener("click", hideOutroScreen);
+window.addEventListener("keydown", (e) => {
+  if (outroScreen.style.display !== "none" && e.key === "Escape") {
+    hideOutroScreen();
+  }
+});
+
 function startGame() {
   if (gameStarted) return;
   gameStarted = true;
@@ -138,7 +157,7 @@ k.scene("main", async () => {
   const layers = mapData.layers;
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
-  const { exitGlow } = addRoomC(k, map);
+  addRoomC(k, map);
   const dustbinGlow = addDustbin(k, map);
 
   const player = k.make([
@@ -263,8 +282,16 @@ k.scene("main", async () => {
     handleObjectCollideEnd("dustbin", dustbinGlow),
   );
 
-  player.onCollide("exit", () => handleObjectCollide("exit", exitGlow));
-  player.onCollideEnd("exit", () => handleObjectCollideEnd("exit", exitGlow));
+  player.onCollide("exit", () => {
+    if (player.isInDialogue) return;
+    markExplored("exit");
+    player.isInDialogue = true;
+    playInteractSound();
+    displayDialogue(dialogueData.exit, () => {
+      player.isInDialogue = false;
+      showOutroScreen();
+    });
+  });
 
   const PLAYER_LABEL_OFFSET = -40;
   const playerLabelBox = createLabelBox(k, "Chirag");

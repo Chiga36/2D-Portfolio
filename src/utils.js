@@ -280,16 +280,16 @@ export function displayDialogue(text, onDisplayEnd) {
     dialogue.innerHTML = "";
     clearInterval(intervalRef);
     closeBtn.removeEventListener("click", onCloseBtnClick);
-    window.removeEventListener("keydown", onEscapeKeyDown);
+    window.removeEventListener("keydown", onDismissKeyDown);
     document.getElementById("game").focus();
   }
 
-  function onEscapeKeyDown(e) {
-    if (e.key === "Escape") onCloseBtnClick();
+  function onDismissKeyDown(e) {
+    if (e.key === "Escape" || e.key === "Enter") onCloseBtnClick();
   }
 
   closeBtn.addEventListener("click", onCloseBtnClick);
-  window.addEventListener("keydown", onEscapeKeyDown);
+  window.addEventListener("keydown", onDismissKeyDown);
 }
 
 export function setCamScale(k) {
@@ -333,7 +333,6 @@ export function addRoomC(k, map) {
     "exit",
   ]);
   addWorldLabel(k, map, 232, 260, LABEL_TEXT.exit);
-  const exitGlow = createGlow(k, map, 224, 268, 14, 14);
 
   // centered under the window (which sits on the top wall, map x300-332)
   map.add([k.sprite("plant-pot"), k.pos(300, 238)]);
@@ -345,8 +344,6 @@ export function addRoomC(k, map) {
     k.pos(302, 239),
   ]);
   addWorldLabel(k, map, 308, 238, "Plant");
-
-  return { exitGlow };
 }
 
 export function addDustbin(k, map) {

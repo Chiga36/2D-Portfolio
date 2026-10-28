@@ -29,6 +29,6 @@ export const dialogueData = {
     MLflow.`,
   "welcome-gate": `Welcome to my portfolio! Walk around, bump into things, and read about who I am and what I've
     built. Hope you enjoy the visit!`,
-  exit: `If you want to exit my portfolio, just close the tab. Thanks for stopping by!`,
+  exit: `This is the exit door, hit enter to continue.`,
   dustbin: `That's my dustbin. This is where all my bad code, failed builds, and 3am debugging regrets go to die.`,
 };
