@@ -24,9 +24,7 @@ export const dialogueData = {
     app with on-device webcam attention detection and OCR-verified penalty proofs (Next.js, Supabase, MediaPipe,
     Tesseract.js). And an Image Caption Generator combining NLP & Computer Vision (LSTM + DenseNet). Check out the
     code on my <a href="https://github.com/Chiga36" target="_blank">GitHub</a>!`,
-  library: `There are a lot of programming books on my shelves! My toolkit: Python, TypeScript, C/C++, TensorFlow,
-    PyTorch, RAG & ChromaDB, React, Next.js, FastAPI, Supabase, AWS, Docker, Git, and MLOps tools like DVC and
-    MLflow.`,
+  library: `This is where I keep my books. Want to know what I am reading currently? Press Enter to know.`,
   "welcome-gate": `Welcome to my portfolio! Walk around, bump into things, and read about who I am and what I've
     built. Hope you enjoy the visit!`,
   exit: `This is the exit door, hit enter to continue.`,

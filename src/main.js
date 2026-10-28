@@ -1,4 +1,5 @@
 import { dialogueData, scaleFactor } from "./constants";
+import { currentlyReadingBooks } from "./currentlyReading";
 import { k } from "./kaboomCtx";
 import {
   addDustbin,
@@ -89,6 +90,53 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+const libraryScreen = document.getElementById("library-screen");
+const libraryClose = document.getElementById("library-close");
+
+currentlyReadingBooks.forEach(({ genre, books }, colIndex) => {
+  const genreEl = document.getElementById(`library-genre-${colIndex}`);
+  if (genreEl) genreEl.textContent = genre;
+
+  const colEl = document.querySelector(`.library-col-${colIndex}`);
+  if (!colEl) return;
+  books.forEach((title, rowIndex) => {
+    const row = document.createElement("div");
+    row.className = "library-row";
+    row.style.top = `${(rowIndex * 100) / books.length}%`;
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "library-row-tooltip";
+    const label = document.createElement("span");
+    label.textContent = title;
+    tooltip.appendChild(label);
+
+    row.appendChild(tooltip);
+    colEl.appendChild(row);
+  });
+});
+
+// Set once the "main" scene creates the player, so the library popup can
+// block/restore movement by toggling isInDialogue while it's open.
+let activePlayer = null;
+
+function showLibraryScreen() {
+  libraryScreen.style.display = "flex";
+  if (activePlayer) activePlayer.isInDialogue = true;
+}
+
+function hideLibraryScreen() {
+  libraryScreen.style.display = "none";
+  if (activePlayer) activePlayer.isInDialogue = false;
+  document.getElementById("game").focus();
+}
+
+libraryClose.addEventListener("click", hideLibraryScreen);
+window.addEventListener("keydown", (e) => {
+  if (libraryScreen.style.display !== "none" && e.key === "Escape") {
+    hideLibraryScreen();
+  }
+});
+
 function startGame() {
   if (gameStarted) return;
   gameStarted = true;
@@ -176,6 +224,7 @@ k.scene("main", async () => {
     },
     "player",
   ]);
+  activePlayer = player;
 
   // Once an object has been seen, re-touching it doesn't reopen the dialogue
   // right away: it just glows, and the player confirms with Enter. Only one
@@ -186,7 +235,10 @@ k.scene("main", async () => {
   function openObjectDialogue(name) {
     player.isInDialogue = true;
     playInteractSound();
-    displayDialogue(dialogueData[name], () => (player.isInDialogue = false));
+    displayDialogue(dialogueData[name], () => {
+      player.isInDialogue = false;
+      if (name === "library") showLibraryScreen();
+    });
   }
 
   function handleObjectCollide(name, glow) {
