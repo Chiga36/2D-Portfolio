@@ -1,10 +1,7 @@
 export const scaleFactor = 4;
 
 export const dialogueData = {
-  pc: `This is my PC. I'm currently an AI Intern at IISc Bangalore, optimizing video generation models for better
-    performance and output quality. Before that, I was a GenAI Intern at KPMG, building an interactive mode for
-    creating custom AI agents. I mostly work in Python and TypeScript, with TensorFlow and PyTorch for the ML
-    side. Check out my code on <a href="https://github.com/Chiga36" target="_blank">GitHub</a>!`,
+  pc: `My PC has all the projects, experience, tech stack and certifications I have worked on. Press Enter to continue.`,
   "cs-degree": `This is my CS degree, I hung it on the wall because I'm proud of it. I'm a Computer Science student at
     MS Ramaiah Institute of Technology (2022–2026), currently holding a CGPA of 8.3/10. Coursework includes Data
     Structures & Algorithms, Object-Oriented Programming, and DBMS.`,

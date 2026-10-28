@@ -1,6 +1,7 @@
 import { dialogueData, scaleFactor } from "./constants";
 import { currentlyReadingBooks } from "./currentlyReading";
 import { scrollSections } from "./scrollContent";
+import { setupPcScreen } from "./pcScreen";
 import { k } from "./kaboomCtx";
 import {
   addDustbin,
@@ -62,6 +63,7 @@ musicToggle.addEventListener("click", () => {
   musicEnabled = !musicEnabled;
   localStorage.setItem("musicEnabled", String(musicEnabled));
   applyMusicState();
+  document.getElementById("game").focus();
 });
 applyMusicState();
 
@@ -70,6 +72,7 @@ const exploreToggle = document.getElementById("explore-toggle");
 exploreToggle.addEventListener("click", () => {
   const open = exploreStatusEl.classList.toggle("open");
   exploreToggle.setAttribute("aria-expanded", String(open));
+  document.getElementById("game").focus();
 });
 
 const outroScreen = document.getElementById("outro-screen");
@@ -119,6 +122,16 @@ currentlyReadingBooks.forEach(({ genre, books }, colIndex) => {
 // Set once the "main" scene creates the player, so the library popup can
 // block/restore movement by toggling isInDialogue while it's open.
 let activePlayer = null;
+
+const pcScreen = setupPcScreen({
+  onOpen: () => {
+    if (activePlayer) activePlayer.isInDialogue = true;
+  },
+  onClose: () => {
+    if (activePlayer) activePlayer.isInDialogue = false;
+    document.getElementById("game").focus();
+  },
+});
 
 function showLibraryScreen() {
   libraryScreen.style.display = "flex";
@@ -346,6 +359,7 @@ k.scene("main", async () => {
       if (!confirmed) return;
       if (name === "library") showLibraryScreen();
       if (name === "resume-projects") showScrollScreen();
+      if (name === "pc") pcScreen.show();
     });
   }
 
