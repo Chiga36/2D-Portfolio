@@ -16,14 +16,7 @@ export const dialogueData = {
   bed: `This is where I sleep, usually after late nights finishing certifications like "Mathematics for Data
     Science" and "Data Science, ML, NLP and MLOps." Also proud of placing 4th in MSRIT's Mathematics Competition
     in 2023!`,
-  "resume-projects": `This is my desk, with my resume and notes on my projects. My resume:
-    <a href="#" target="_blank">Check it out</a> (link coming soon!) Contact me at
-    <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a> if you have any interesting job opportunities!
-    My projects: I built Bid Co-Author, a full-stack RAG platform for bid teams to draft, evidence-check, and score
-    tender responses (FastAPI, ChromaDB, Azure OpenAI, React/TypeScript). I also built Tracker, an AI-assisted habit
-    app with on-device webcam attention detection and OCR-verified penalty proofs (Next.js, Supabase, MediaPipe,
-    Tesseract.js). And an Image Caption Generator combining NLP & Computer Vision (LSTM + DenseNet). Check out the
-    code on my <a href="https://github.com/Chiga36" target="_blank">GitHub</a>!`,
+  "resume-projects": `Okay, now let's have a look at the resume and research paper. Press Enter to continue.`,
   library: `This is where I keep my books. Want to know what I am reading currently? Press Enter to know.`,
   "welcome-gate": `Welcome to my portfolio! Walk around, bump into things, and read about who I am and what I've
     built. Hope you enjoy the visit!`,

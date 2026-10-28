@@ -1,5 +1,6 @@
 import { dialogueData, scaleFactor } from "./constants";
 import { currentlyReadingBooks } from "./currentlyReading";
+import { scrollSections } from "./scrollContent";
 import { k } from "./kaboomCtx";
 import {
   addDustbin,
@@ -85,7 +86,7 @@ function hideOutroScreen() {
 
 outroClose.addEventListener("click", hideOutroScreen);
 window.addEventListener("keydown", (e) => {
-  if (outroScreen.style.display !== "none" && e.key === "Escape") {
+  if (outroScreen.style.display === "flex" && e.key === "Escape") {
     hideOutroScreen();
   }
 });
@@ -132,9 +133,114 @@ function hideLibraryScreen() {
 
 libraryClose.addEventListener("click", hideLibraryScreen);
 window.addEventListener("keydown", (e) => {
-  if (libraryScreen.style.display !== "none" && e.key === "Escape") {
+  if (libraryScreen.style.display === "flex" && e.key === "Escape") {
     hideLibraryScreen();
   }
+});
+
+const scrollScreen = document.getElementById("scroll-screen");
+const scrollBody = document.getElementById("scroll-body");
+const scrollContent = document.getElementById("scroll-content");
+const scrollPrev = document.getElementById("scroll-prev");
+const scrollNext = document.getElementById("scroll-next");
+const scrollPage = document.getElementById("scroll-page");
+const scrollClose = document.getElementById("scroll-close");
+let scrollIndex = 0;
+let scrollOpen = false;
+let scrollClosing = false;
+
+function renderScrollSection() {
+  const section = scrollSections[scrollIndex];
+  scrollContent.replaceChildren();
+
+  const title = document.createElement("h2");
+  title.className = "scroll-title";
+  title.textContent = section.title;
+  scrollContent.appendChild(title);
+
+  for (const block of section.blocks) {
+    if (block.heading) {
+      const heading = document.createElement("h3");
+      heading.className = "scroll-heading";
+      heading.textContent = block.heading;
+      scrollContent.appendChild(heading);
+    }
+    for (const line of block.lines) {
+      const p = document.createElement("p");
+      p.className = block.heading ? "scroll-line" : "scroll-empty";
+      if (typeof line === "string") {
+        p.textContent = line;
+      } else {
+        const link = document.createElement("a");
+        link.href = line.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = line.text;
+        p.appendChild(link);
+      }
+      scrollContent.appendChild(p);
+    }
+  }
+
+  const prev = scrollSections[scrollIndex - 1];
+  const next = scrollSections[scrollIndex + 1];
+  scrollPrev.style.visibility = prev ? "visible" : "hidden";
+  scrollNext.style.visibility = next ? "visible" : "hidden";
+  scrollPrev.querySelector(".scroll-nav-label").textContent = prev?.title ?? "";
+  scrollNext.querySelector(".scroll-nav-label").textContent = next?.title ?? "";
+  // the scroll font's "/" draws like a backslash, so spell it out
+  scrollPage.textContent = `${scrollIndex + 1} of ${scrollSections.length}`;
+  scrollContent.scrollTop = 0;
+}
+
+function goToScrollSection(index) {
+  if (index < 0 || index >= scrollSections.length || index === scrollIndex) return;
+  scrollContent.classList.add("fading");
+  setTimeout(() => {
+    scrollIndex = index;
+    renderScrollSection();
+    scrollContent.classList.remove("fading");
+  }, 200);
+}
+
+function showScrollScreen() {
+  scrollIndex = 0;
+  renderScrollSection();
+  scrollOpen = true;
+  scrollClosing = false;
+  scrollScreen.classList.remove("closing", "opening");
+  scrollScreen.style.display = "flex";
+  void scrollScreen.offsetWidth; // restart the unroll animation on every open
+  scrollScreen.classList.add("opening");
+  if (activePlayer) activePlayer.isInDialogue = true;
+}
+
+function hideScrollScreen() {
+  if (!scrollOpen || scrollClosing) return;
+  scrollClosing = true;
+  scrollScreen.classList.remove("opening");
+  scrollScreen.classList.add("closing");
+}
+
+// movement stays locked until the roll-up animation has actually finished
+scrollBody.addEventListener("animationend", (e) => {
+  if (e.animationName !== "scroll-roll-up") return;
+  scrollScreen.style.display = "none";
+  scrollScreen.classList.remove("closing");
+  scrollOpen = false;
+  scrollClosing = false;
+  if (activePlayer) activePlayer.isInDialogue = false;
+  document.getElementById("game").focus();
+});
+
+scrollPrev.addEventListener("click", () => goToScrollSection(scrollIndex - 1));
+scrollNext.addEventListener("click", () => goToScrollSection(scrollIndex + 1));
+scrollClose.addEventListener("click", hideScrollScreen);
+window.addEventListener("keydown", (e) => {
+  if (!scrollOpen || scrollClosing) return;
+  if (e.key === "Escape") hideScrollScreen();
+  else if (e.key === "ArrowLeft") goToScrollSection(scrollIndex - 1);
+  else if (e.key === "ArrowRight") goToScrollSection(scrollIndex + 1);
 });
 
 function startGame() {
@@ -235,9 +341,11 @@ k.scene("main", async () => {
   function openObjectDialogue(name) {
     player.isInDialogue = true;
     playInteractSound();
-    displayDialogue(dialogueData[name], () => {
+    displayDialogue(dialogueData[name], (confirmed) => {
       player.isInDialogue = false;
+      if (!confirmed) return;
       if (name === "library") showLibraryScreen();
+      if (name === "resume-projects") showScrollScreen();
     });
   }
 
@@ -339,9 +447,9 @@ k.scene("main", async () => {
     markExplored("exit");
     player.isInDialogue = true;
     playInteractSound();
-    displayDialogue(dialogueData.exit, () => {
+    displayDialogue(dialogueData.exit, (confirmed) => {
       player.isInDialogue = false;
-      showOutroScreen();
+      if (confirmed) showOutroScreen();
     });
   });
 

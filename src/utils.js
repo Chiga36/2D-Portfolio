@@ -274,8 +274,10 @@ export function displayDialogue(text, onDisplayEnd) {
 
   const closeBtn = document.getElementById("close");
 
-  function onCloseBtnClick() {
-    onDisplayEnd();
+  // `confirmed` is false only for Escape, so callers can skip follow-up
+  // screens (bookshelf, scroll, outro) when the player just wants out.
+  function onCloseBtnClick(confirmed = true) {
+    onDisplayEnd(confirmed !== false);
     dialogueUI.style.display = "none";
     dialogue.innerHTML = "";
     clearInterval(intervalRef);
@@ -285,7 +287,8 @@ export function displayDialogue(text, onDisplayEnd) {
   }
 
   function onDismissKeyDown(e) {
-    if (e.key === "Escape" || e.key === "Enter") onCloseBtnClick();
+    if (e.key === "Escape") onCloseBtnClick(false);
+    else if (e.key === "Enter") onCloseBtnClick(true);
   }
 
   closeBtn.addEventListener("click", onCloseBtnClick);
