@@ -393,6 +393,14 @@ export function addDustbin(k, map) {
 const ROOM_THRESHOLDS = [{ room: "room-a", maxX: 800 }];
 const ROOM_C_MIN_Y = 710; // scaled map-y past the gap cut into room B's bottom wall
 
+const ROOM_NAMES = {
+  "room-a": "The Tech Corner",
+  "room-b": "The Mind Corner",
+  "room-c": "The Next Chapter",
+};
+
+let roomNameTimeout;
+
 export function updateRoomBackground(playerX, playerY) {
   let room;
   const match = ROOM_THRESHOLDS.find((entry) => playerX < entry.maxX);
@@ -409,4 +417,11 @@ export function updateRoomBackground(playerX, playerY) {
 
   app.classList.remove("room-a", "room-b", "room-c");
   app.classList.add(room);
+
+  const roomNameEl = document.getElementById("room-name");
+  if (!roomNameEl) return;
+  roomNameEl.textContent = ROOM_NAMES[room];
+  roomNameEl.classList.add("show");
+  clearTimeout(roomNameTimeout);
+  roomNameTimeout = setTimeout(() => roomNameEl.classList.remove("show"), 2200);
 }

@@ -5,7 +5,7 @@
 // appears when a visitor hovers over that row.
 export const currentlyReadingBooks = [
   {
-    genre: "Philosophy/Psychology",
+    genre: "Philosophy /\nPsychology",
     books: [
       "Tuesdays With Morrie",
       "The Courage to be Disliked",

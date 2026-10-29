@@ -190,6 +190,37 @@
         cursor: pointer;
       }
 
+      /* a brief "entering a new room" banner, not a permanent HUD element -
+         it fades in on #room-name.show and back out when that's removed, so
+         it never has to permanently compete for space with the explore
+         status pill or the music toggle */
+      #room-name {
+        position: absolute;
+        top: 1.25rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        margin: 0;
+        max-width: min(70vw, 20rem);
+        background: #fdecc8;
+        border: 3px solid #8a5a2a;
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        font-family: monogram, monospace;
+        font-size: 1.4rem;
+        color: #4a2f1a;
+        text-align: center;
+        box-sizing: border-box;
+        user-select: none;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      #room-name.show {
+        opacity: 1;
+      }
+
       #explore-arrow {
         font-size: 1.1rem;
         transition: transform 0.2s ease;
@@ -581,11 +612,26 @@
         user-select: none;
       }
 
+      /* #library-headers has no width of its own, so it stretches (the
+         flex-column default) to match #library-panel's width, which the
+         breakpoints below resize; #library-image-wrap just fills that. */
+      #library-panel {
+        display: flex;
+        flex-direction: column;
+        width: min(32rem, 62%);
+        margin-top: 3rem;
+      }
+
+      #library-headers {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 0.6rem;
+      }
+
       #library-image-wrap {
         position: relative;
-        width: min(32rem, 62%);
+        width: 100%;
         aspect-ratio: 474 / 471;
-        margin-top: 3rem;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.6);
@@ -618,24 +664,21 @@
       }
 
       .library-genre {
-        position: absolute;
-        top: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: #fdecc8;
-        border: 2px solid #8a5a2a;
+        border: 3px solid #8a5a2a;
         border-radius: 6px;
-        padding: 0.2rem 0.4rem;
+        padding: 0.3rem 0.4rem;
         font-family: monogram, monospace;
         font-size: 0.8rem;
-        line-height: 1.15;
+        line-height: 1.2;
         color: #4a2f1a;
         text-align: center;
-        max-width: 92%;
-        overflow-wrap: anywhere;
+        white-space: pre-line;
         box-sizing: border-box;
-        pointer-events: none;
       }
 
       .library-row {
@@ -1785,10 +1828,14 @@
           font-size: 1.2rem;
         }
 
+        #library-panel {
+          width: auto;
+          margin-top: 2.6rem;
+        }
+
         #library-image-wrap {
           width: auto;
           height: 78vh;
-          margin-top: 2.6rem;
         }
 
         #outro-title {
@@ -1863,9 +1910,16 @@
           font-size: 1.35rem;
         }
 
-        #library-image-wrap {
+        #library-panel {
           width: 92%;
           margin-top: 4rem;
+        }
+
+        /* clear of the wide explore-status pill, which otherwise reaches
+           past screen-center on a narrow phone */
+        #room-name {
+          top: 4.4rem;
+          font-size: 1.1rem;
         }
       }
     </style>
@@ -1894,6 +1948,7 @@
         </button>
         <ul id="explore-list"></ul>
       </div>
+      <p id="room-name"></p>
       <p id="interact-hint">
         <span class="kbd-only">Press Enter to interact</span>
         <span class="touch-only">Tap Interact</span>
@@ -1926,16 +1981,17 @@ Email: <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a></p>
       </div>
       <div id="library-screen">
         <h2 id="library-title">Currently reading — <span class="kbd-only">hover</span><span class="touch-only">tap</span> a shelf row</h2>
-        <div id="library-image-wrap">
-          <img src="/library-shelf.jpg" alt="Bookshelf" />
-          <div class="library-column library-col-0">
+        <div id="library-panel">
+          <div id="library-headers">
             <span class="library-genre" id="library-genre-0"></span>
-          </div>
-          <div class="library-column library-col-1">
             <span class="library-genre" id="library-genre-1"></span>
-          </div>
-          <div class="library-column library-col-2">
             <span class="library-genre" id="library-genre-2"></span>
+          </div>
+          <div id="library-image-wrap">
+            <img src="/library-shelf.jpg" alt="Bookshelf" />
+            <div class="library-column library-col-0"></div>
+            <div class="library-column library-col-1"></div>
+            <div class="library-column library-col-2"></div>
           </div>
         </div>
         <button id="library-close" aria-label="Close">&times; Close</button>
