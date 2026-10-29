@@ -45,17 +45,19 @@ const welcomeScreen = document.getElementById("welcome-screen");
 let gameStarted = false;
 
 const bgm = document.getElementById("bgm");
+const outroBgm = document.getElementById("outro-bgm");
 const musicToggle = document.getElementById("music-toggle");
 const skipIntroBtn = document.getElementById("skip-intro");
 let musicEnabled = localStorage.getItem("musicEnabled") !== "false";
+let currentTrack = bgm;
 
 function applyMusicState() {
   musicToggle.textContent = musicEnabled ? "\u{1F50A}" : "\u{1F507}";
   musicToggle.setAttribute("aria-pressed", String(musicEnabled));
   if (musicEnabled) {
-    bgm.play().catch(() => {});
+    currentTrack.play().catch(() => {});
   } else {
-    bgm.pause();
+    currentTrack.pause();
   }
 }
 
@@ -80,10 +82,17 @@ const outroClose = document.getElementById("outro-close");
 
 function showOutroScreen() {
   outroScreen.style.display = "flex";
+  bgm.pause();
+  currentTrack = outroBgm;
+  applyMusicState();
 }
 
 function hideOutroScreen() {
   outroScreen.style.display = "none";
+  outroBgm.pause();
+  outroBgm.currentTime = 0;
+  currentTrack = bgm;
+  applyMusicState();
   document.getElementById("game").focus();
 }
 
@@ -148,6 +157,27 @@ libraryClose.addEventListener("click", hideLibraryScreen);
 window.addEventListener("keydown", (e) => {
   if (libraryScreen.style.display === "flex" && e.key === "Escape") {
     hideLibraryScreen();
+  }
+});
+
+const degreeScreen = document.getElementById("degree-screen");
+const degreeClose = document.getElementById("degree-close");
+
+function showDegreeScreen() {
+  degreeScreen.style.display = "flex";
+  if (activePlayer) activePlayer.isInDialogue = true;
+}
+
+function hideDegreeScreen() {
+  degreeScreen.style.display = "none";
+  if (activePlayer) activePlayer.isInDialogue = false;
+  document.getElementById("game").focus();
+}
+
+degreeClose.addEventListener("click", hideDegreeScreen);
+window.addEventListener("keydown", (e) => {
+  if (degreeScreen.style.display === "flex" && e.key === "Escape") {
+    hideDegreeScreen();
   }
 });
 
@@ -324,7 +354,7 @@ k.scene("main", async () => {
   const layers = mapData.layers;
 
   const map = k.add([k.sprite("map"), k.pos(0), k.scale(scaleFactor)]);
-  addRoomC(k, map);
+  const { plantGlow, conspiracyGlow } = addRoomC(k, map);
   const dustbinGlow = addDustbin(k, map);
 
   const player = k.make([
@@ -360,6 +390,7 @@ k.scene("main", async () => {
       if (name === "library") showLibraryScreen();
       if (name === "resume-projects") showScrollScreen();
       if (name === "pc") pcScreen.show();
+      if (name === "cs-degree") showDegreeScreen();
     });
   }
 
@@ -454,6 +485,18 @@ k.scene("main", async () => {
   player.onCollide("dustbin", () => handleObjectCollide("dustbin", dustbinGlow));
   player.onCollideEnd("dustbin", () =>
     handleObjectCollideEnd("dustbin", dustbinGlow),
+  );
+
+  player.onCollide("plant", () => handleObjectCollide("plant", plantGlow));
+  player.onCollideEnd("plant", () =>
+    handleObjectCollideEnd("plant", plantGlow),
+  );
+
+  player.onCollide("conspiracy-board", () =>
+    handleObjectCollide("conspiracy-board", conspiracyGlow),
+  );
+  player.onCollideEnd("conspiracy-board", () =>
+    handleObjectCollideEnd("conspiracy-board", conspiracyGlow),
   );
 
   player.onCollide("exit", () => {

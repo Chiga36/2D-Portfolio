@@ -11,6 +11,8 @@ const LABEL_TEXT = {
   "welcome-gate": "Welcome Gate",
   exit: "Exit",
   dustbin: "Dustbin",
+  plant: "Plant",
+  "conspiracy-board": "Conspiracy Board",
 };
 
 export function getLabelText(name) {
@@ -345,8 +347,27 @@ export function addRoomC(k, map) {
     k.area({ shape: new k.Rect(k.vec2(0), 13, 19) }),
     k.body({ isStatic: true }),
     k.pos(302, 239),
+    "plant",
   ]);
-  addWorldLabel(k, map, 308, 238, "Plant");
+  addWorldLabel(k, map, 308, 238, LABEL_TEXT.plant);
+  const plantGlow = createGlow(k, map, 302, 239, 13, 19);
+
+  // the pinboard art is already baked into room-c.png (left of the chimney,
+  // native px 8,42 to 37,53) and sits over the existing top-wall collider
+  // above (which ends at map y232), so this only needs a tagged trigger
+  // area, not its own body. The trigger is extended a few px past the art's
+  // bottom edge, down to the wall's edge, so the player's collider (which
+  // can only ever reach as far as that wall) actually overlaps it — while
+  // the glow highlight below stays sized to the art itself.
+  map.add([
+    k.area({ shape: new k.Rect(k.vec2(0), 30, 15) }),
+    k.pos(229, 218),
+    "conspiracy-board",
+  ]);
+  addWorldLabel(k, map, 244, 217, LABEL_TEXT["conspiracy-board"]);
+  const conspiracyGlow = createGlow(k, map, 229, 218, 30, 12);
+
+  return { plantGlow, conspiracyGlow };
 }
 
 export function addDustbin(k, map) {

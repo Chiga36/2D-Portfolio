@@ -17,8 +17,8 @@
       }
 
       @font-face {
-        font-family: "Kingthings Embroidery";
-        src: url(/fonts/Kingthings-Embroidery.ttf) format("truetype");
+        font-family: "Knights Quest";
+        src: url(/fonts/KnightsQuest.ttf) format("truetype");
       }
 
       body {
@@ -334,13 +334,22 @@
 
       #outro-note-text {
         font-family: "Ghostero", monogram, cursive;
-        font-weight: normal;
-        font-size: 3rem;
+        font-weight: bold;
+        font-size: 3.2rem;
         line-height: 1.5;
         color: #1a1005;
         margin: 0;
         white-space: pre-line;
         text-align: left;
+      }
+
+      #outro-note-text a {
+        color: #7a3b12;
+        text-decoration: underline;
+      }
+
+      #outro-note-text a:hover {
+        color: #a84f17;
       }
 
       #outro-zombie,
@@ -501,7 +510,8 @@
         transform: scale(1);
       }
 
-      #library-close {
+      #library-close,
+      #degree-close {
         position: absolute;
         top: 1.5rem;
         right: 1.5rem;
@@ -514,6 +524,122 @@
         color: #6b4423;
         padding: 0.5rem 1.25rem;
         cursor: pointer;
+      }
+
+      #degree-screen {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.2rem;
+        background: rgba(20, 10, 30, 0.88);
+      }
+
+      #degree-heading {
+        margin: 0;
+        font-family: monogram, monospace;
+        font-size: 2.2rem;
+        color: #ffcf4d;
+        text-shadow:
+          2px 2px 0 #5a3a10,
+          -2px 2px 0 #5a3a10,
+          2px -2px 0 #5a3a10,
+          -2px -2px 0 #5a3a10;
+        user-select: none;
+      }
+
+      /* royal-frame.png is 199x141, i.e. A4 landscape (297:210) */
+      #degree-frame {
+        position: relative;
+        container-type: inline-size;
+        width: min(88vw, calc(76vh * 297 / 210));
+        aspect-ratio: 297 / 210;
+        background:
+          url("/royal-frame.png") 0 0 / 100% 100% no-repeat,
+          #f3e4bc url("/scroll-parchment.png") 0 0 / 96px 96px;
+        image-rendering: pixelated;
+        filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.4));
+        animation: degree-hang 0.4s steps(6, end);
+      }
+
+      /* insets match the frame's 21px moulding + velvet mat */
+      #degree-content {
+        position: absolute;
+        top: 17%;
+        bottom: 17%;
+        left: 13%;
+        right: 13%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.4cqw;
+        text-align: center;
+        font-family: "Knights Quest", monogram, serif;
+        color: #3b230e;
+      }
+
+      #degree-content p {
+        margin: 0;
+        line-height: 1.15;
+      }
+
+      .degree-institute {
+        font-size: 3.6cqw;
+        color: #6b2a10;
+      }
+
+      .degree-major {
+        font-size: 7.2cqw;
+        color: #6b2a10;
+      }
+
+      .degree-name {
+        font-size: 4.2cqw;
+      }
+
+      .degree-meta {
+        font-size: 3cqw;
+      }
+
+      .degree-divider {
+        position: relative;
+        width: 46%;
+        height: 0.5cqw;
+        background: #c9902a;
+        box-shadow: 0 0.25cqw 0 #8a5a14;
+      }
+
+      .degree-divider::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1.6cqw;
+        height: 1.6cqw;
+        background: #8b1a2b;
+        border: 0.35cqw solid #2a1a08;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      @keyframes degree-hang {
+        from {
+          transform: translateY(-6vh);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #degree-frame {
+          animation: none;
+        }
       }
 
       #scroll-screen {
@@ -574,7 +700,7 @@
         overflow-y: auto;
         scrollbar-width: thin;
         scrollbar-color: #8a5a2a transparent;
-        font-family: "Kingthings Embroidery", monogram, serif;
+        font-family: "Knights Quest", monogram, serif;
         color: #3b230e;
         transition: opacity 0.2s ease;
       }
@@ -688,7 +814,7 @@
         display: flex;
         align-items: center;
         gap: 0.6rem;
-        font-family: "Kingthings Embroidery", monogram, serif;
+        font-family: "Knights Quest", monogram, serif;
         font-size: 1.3rem;
         color: #3b230e;
         background: #f3e4bc;
@@ -719,7 +845,7 @@
       }
 
       #scroll-page {
-        font-family: "Kingthings Embroidery", monogram, serif;
+        font-family: "Knights Quest", monogram, serif;
         font-size: 1.2rem;
         color: #f3e4bc;
       }
@@ -1483,8 +1609,8 @@
           <p id="outro-note-text">Thank you for exploring my home!
 
 Feel free to reach out:
-LinkedIn: chiragsaha3
-Email: chigaswami@gmail.com</p>
+LinkedIn: <a href="https://www.linkedin.com/in/chiragsaha3" target="_blank" rel="noopener">chiragsaha3</a>
+Email: <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a></p>
         </div>
         <img id="outro-zombie" src="/zombie.png" alt="Zombie" />
         <img id="outro-peashooter" src="/peashooter.png" alt="Peashooter" />
@@ -1505,6 +1631,20 @@ Email: chigaswami@gmail.com</p>
           </div>
         </div>
         <button id="library-close" aria-label="Close">&times; Close</button>
+      </div>
+      <div id="degree-screen">
+        <h2 id="degree-heading">My CS Degree</h2>
+        <div id="degree-frame">
+          <div id="degree-content">
+            <p class="degree-institute">MS Ramaiah Institute of Technology</p>
+            <div class="degree-divider"></div>
+            <p class="degree-major">Computer Science</p>
+            <p class="degree-name">Chirag Saha</p>
+            <div class="degree-divider"></div>
+            <p class="degree-meta">2022 &ndash; 2026 &middot; CGPA 8.3 / 10</p>
+          </div>
+        </div>
+        <button id="degree-close" aria-label="Close">&times; Close</button>
       </div>
       <div id="scroll-screen">
         <div id="scroll-wrap">
@@ -1558,6 +1698,7 @@ Email: chigaswami@gmail.com</p>
         <button id="pc-close" aria-label="Close">&times; Close</button>
       </div>
       <audio id="bgm" src="/bgm.mp3" loop preload="auto"></audio>
+      <audio id="outro-bgm" src="/pvz-theme.mp3" loop preload="auto"></audio>
       <button id="music-toggle" aria-label="Toggle music" aria-pressed="true">🔊</button>
       <button id="skip-intro" aria-label="Skip introduction">Skip (Esc) &rarr;</button>
       <div id="welcome-screen">

@@ -4,10 +4,10 @@
 //
 // A line can be plain text, or { text, href } to make it a link.
 //
-// Note: the scroll font (Kingthings Embroidery) has no glyphs for
-// + < > # % | or fancy dashes/bullets, and its "/" looks like a backslash,
-// so stick to plain hyphens and "&". Keep lines short: the parchment only
-// fits about a dozen lines before it needs scrolling.
+// Note: the scroll font (Knights Quest) has no glyphs for < > # | (they'll
+// fall back to a plain serif font), but + % / \ - – — • & all render fine.
+// Keep lines short: the parchment only fits about a dozen lines before it
+// needs scrolling.
 export const scrollSections = [
   {
     title: "Resume",
@@ -18,6 +18,10 @@ export const scrollSections = [
           "MS Ramaiah Institute of Technology",
           "Computer Science, 2022 - 2026, CGPA 8.3",
         ],
+      },
+      {
+        heading: "Skills",
+        lines: ["Python, TypeScript, PyTorch, React, RAG"],
       },
       {
         heading: "Experience",
@@ -32,21 +36,20 @@ export const scrollSections = [
         ],
       },
       {
-        heading: "Skills",
-        lines: ["Python, TypeScript, PyTorch, React, RAG"],
-      },
-      {
         heading: "Contact",
         lines: [
           { text: "chigaswami@gmail.com", href: "mailto:chigaswami@gmail.com" },
           { text: "GitHub: Chiga36", href: "https://github.com/Chiga36" },
-          "LinkedIn: chiragsaha3",
+          {
+            text: "LinkedIn: chiragsaha3",
+            href: "https://www.linkedin.com/in/chiragsaha3",
+          },
         ],
       },
     ],
   },
   {
     title: "Research Papers",
-    blocks: [{ lines: ["None as of now."] }],
+    blocks: [{ lines: ["Coming Soon..."] }],
   },
 ];
