@@ -2,6 +2,7 @@ import { dialogueData, scaleFactor } from "./constants";
 import { currentlyReadingBooks } from "./currentlyReading";
 import { scrollSections } from "./scrollContent";
 import { setupPcScreen } from "./pcScreen";
+import { setupTouchControls } from "./touchControls";
 import { k } from "./kaboomCtx";
 import {
   addDustbin,
@@ -131,6 +132,10 @@ currentlyReadingBooks.forEach(({ genre, books }, colIndex) => {
 // Set once the "main" scene creates the player, so the library popup can
 // block/restore movement by toggling isInDialogue while it's open.
 let activePlayer = null;
+
+// Swapped in by the "main" scene; the on-screen Interact button calls it.
+let triggerInteract = () => {};
+const touch = setupTouchControls({ onInteract: () => triggerInteract() });
 
 const pcScreen = setupPcScreen({
   onOpen: () => {
@@ -316,8 +321,12 @@ k.scene("intro", () => {
   ]);
   introPlayer.play("walk-down");
 
+  // shrink the caption on narrow screens so the longest line stays in its box
+  const introBoxWidth = Math.min(620, k.width() - 40);
+  const introTextSize = Math.min(28, Math.floor((introBoxWidth - 20) / 15));
+
   k.add([
-    k.rect(Math.min(620, k.width() - 40), 100, { radius: 10 }),
+    k.rect(introBoxWidth, 100, { radius: 10 }),
     k.anchor("center"),
     k.pos(k.width() / 2, k.height() / 2 + 170),
     k.color(k.Color.fromHex("#2d1b4d")),
@@ -327,9 +336,9 @@ k.scene("intro", () => {
 
   k.add([
     k.text("Hi, my name is Chirag\nand this is my portfolio", {
-      size: 28,
+      size: introTextSize,
       align: "center",
-      width: k.width() - 80,
+      width: introBoxWidth - 20,
     }),
     k.anchor("center"),
     k.pos(k.width() / 2, k.height() / 2 + 170),
@@ -404,6 +413,7 @@ k.scene("main", async () => {
     pendingInteraction = { name, glow };
     glow.activate();
     interactHint.style.display = "block";
+    touch.setInteractReady(true);
   }
 
   function handleObjectCollideEnd(name, glow) {
@@ -411,17 +421,22 @@ k.scene("main", async () => {
       glow.deactivate();
       pendingInteraction = null;
       interactHint.style.display = "none";
+      touch.setInteractReady(false);
     }
   }
 
-  k.onKeyPress("enter", () => {
+  function interactWithPending() {
     if (!pendingInteraction || player.isInDialogue) return;
     const { name, glow } = pendingInteraction;
     glow.deactivate();
     pendingInteraction = null;
     interactHint.style.display = "none";
+    touch.setInteractReady(false);
     openObjectDialogue(name);
-  });
+  }
+
+  k.onKeyPress("enter", interactWithPending);
+  triggerInteract = interactWithPending;
 
   const labelRequests = [];
 
@@ -551,51 +566,66 @@ k.scene("main", async () => {
     player.play("idle-side");
   }
 
-  k.onKeyDown(() => {
-    if (!gameStarted || player.isInDialogue) return;
-
-    const keyMap = [
-      k.isKeyDown("d") || k.isKeyDown("right"),
-      k.isKeyDown("a") || k.isKeyDown("left"),
-      k.isKeyDown("w") || k.isKeyDown("up"),
-      k.isKeyDown("s") || k.isKeyDown("down"),
-    ];
-
-    const nbOfKeyPressed = keyMap.filter(Boolean).length;
-    if (nbOfKeyPressed !== 1) return;
-
-    if (keyMap[0]) {
+  function walk(direction) {
+    if (direction === "right") {
       player.flipX = false;
       if (player.curAnim() !== "walk-side") player.play("walk-side");
       player.direction = "right";
       moveClamped(player.speed, 0);
-      return;
-    }
-
-    if (keyMap[1]) {
+    } else if (direction === "left") {
       player.flipX = true;
       if (player.curAnim() !== "walk-side") player.play("walk-side");
       player.direction = "left";
       moveClamped(-player.speed, 0);
-      return;
-    }
-
-    if (keyMap[2]) {
+    } else if (direction === "up") {
       if (player.curAnim() !== "walk-up") player.play("walk-up");
       player.direction = "up";
       moveClamped(0, -player.speed);
-      return;
-    }
-
-    if (keyMap[3]) {
+    } else if (direction === "down") {
       if (player.curAnim() !== "walk-down") player.play("walk-down");
       player.direction = "down";
       moveClamped(0, player.speed);
     }
+  }
+
+  const DIRECTION_KEYS = [
+    ["right", ["d", "right"]],
+    ["left", ["a", "left"]],
+    ["up", ["w", "up"]],
+    ["down", ["s", "down"]],
+  ];
+
+  function heldKeyDirections() {
+    return DIRECTION_KEYS.filter(([, keys]) => keys.some((key) => k.isKeyDown(key))).map(
+      ([direction]) => direction,
+    );
+  }
+
+  k.onKeyDown(() => {
+    if (!gameStarted || player.isInDialogue) return;
+    const held = heldKeyDirections();
+    if (held.length === 1) walk(held[0]);
   });
 
   k.onKeyRelease(() => {
     stopAnims();
+  });
+
+  // Touch pad: driven per frame since there is no key-down event to hook
+  let touchWalking = false;
+  k.onUpdate(() => {
+    touch.setActive(gameStarted && !player.isInDialogue);
+
+    const direction = touch.getDirection();
+    const canWalk =
+      direction && gameStarted && !player.isInDialogue && heldKeyDirections().length === 0;
+    if (canWalk) {
+      walk(direction);
+      touchWalking = true;
+    } else if (touchWalking) {
+      touchWalking = false;
+      stopAnims();
+    }
   });
 });
 

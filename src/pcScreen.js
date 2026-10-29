@@ -106,6 +106,19 @@ export function setupPcScreen({ onOpen, onClose }) {
   const closeBtn = document.getElementById("pc-close");
   const arrowKeys = buildKeyboard(document.getElementById("pc-keys"));
 
+  const deskEl = document.querySelector(".pc-desk");
+  const keyboardEl = document.querySelector(".pc-keyboard");
+
+  // the drawn keyboard has a fixed pixel width, so shrink it to fit narrow
+  // screens (zoom keeps the layout box in step with the visual size)
+  function fitKeyboard() {
+    keyboardEl.style.zoom = "";
+    const free = deskEl.clientWidth - 16;
+    const natural = keyboardEl.offsetWidth;
+    if (free > 0 && natural > free) keyboardEl.style.zoom = String(free / natural);
+  }
+  window.addEventListener("resize", fitKeyboard);
+
   let index = 0;
   let open = false;
   let closing = false;
@@ -162,6 +175,7 @@ export function setupPcScreen({ onOpen, onClose }) {
     closing = false;
     screenEl.classList.remove("closing", "opening");
     screenEl.style.display = "flex";
+    fitKeyboard();
     void screenEl.offsetWidth; // restart the power-on animation on every open
     screenEl.classList.add("opening");
     onOpen();

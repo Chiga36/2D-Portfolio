@@ -1,4 +1,5 @@
 import { dialogueData, scaleFactor } from "./constants";
+import { isTouchDevice } from "./touchControls";
 
 const LABEL_TEXT = {
   pc: "PC",
@@ -256,9 +257,15 @@ export function playInteractSound() {
   }
 }
 
-export function displayDialogue(text, onDisplayEnd) {
+export function displayDialogue(rawText, onDisplayEnd) {
   const dialogueUI = document.getElementById("textbox-container");
   const dialogue = document.getElementById("dialogue");
+  const textbox = document.getElementById("textbox");
+  const text = isTouchDevice
+    ? rawText.replace(/(press|hit) enter/gi, (_, verb) =>
+        verb === verb.toLowerCase() ? "tap the arrow" : "Tap the arrow",
+      )
+    : rawText;
 
   dialogueUI.style.display = "block";
   let index = 0;
@@ -267,6 +274,7 @@ export function displayDialogue(text, onDisplayEnd) {
     if (index < text.length) {
       currentText += text[index];
       dialogue.innerHTML = currentText;
+      textbox.scrollTop = textbox.scrollHeight;
       index++;
       return;
     }

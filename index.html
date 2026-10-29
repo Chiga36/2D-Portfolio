@@ -77,6 +77,24 @@
         word-spacing: 0.2rem;
       }
 
+      /* small / phone-sized windows: a wide, compact box so long dialogue
+         (e.g. the CS degree) fits without being clipped off-screen */
+      @media (max-width: 900px), (max-height: 520px) {
+        #textbox {
+          left: 3%;
+          right: 3%;
+          bottom: 1.5vh;
+          max-height: 68vh;
+          overflow-y: auto;
+          padding: 1rem 3.4rem 1rem 1.1rem;
+          border-width: 5px;
+        }
+
+        .ui-text {
+          font-size: 1.4rem;
+        }
+      }
+
       .corner-ornament {
         position: absolute;
         width: 3px;
@@ -280,6 +298,161 @@
         }
       }
 
+      .touch-only {
+        display: none;
+      }
+
+      .touch-device .touch-only {
+        display: inline;
+      }
+
+      .touch-device .kbd-only {
+        display: none;
+      }
+
+      /* on-screen controls: shown only on touch-first devices, and only
+         while the player can actually walk (hidden during dialogue/popups) */
+      :root {
+        --pad-size: clamp(130px, 34vmin, 190px);
+      }
+
+      #touch-controls {
+        display: none;
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      .touch-device #touch-controls.active {
+        display: block;
+      }
+
+      .touch-device #interact-hint {
+        bottom: calc(var(--pad-size, 150px) + 2.2rem);
+      }
+
+      #touch-dpad {
+        position: absolute;
+        left: calc(1rem + env(safe-area-inset-left, 0px));
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        width: var(--pad-size);
+        height: var(--pad-size);
+        display: grid;
+        grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+        pointer-events: auto;
+        touch-action: none;
+        opacity: 0.88;
+      }
+
+      .dpad-btn,
+      .dpad-center {
+        box-sizing: border-box;
+        background: #fdecc8;
+        border: 3px solid #8a5a2a;
+        box-shadow: inset 0 0 0 2px #e8c877;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .dpad-center {
+        grid-area: 2 / 2;
+        border-radius: 0;
+      }
+
+      .dpad-btn.up {
+        grid-area: 1 / 2;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .dpad-btn.left {
+        grid-area: 2 / 1;
+        border-radius: 10px 0 0 10px;
+      }
+
+      .dpad-btn.right {
+        grid-area: 2 / 3;
+        border-radius: 0 10px 10px 0;
+      }
+
+      .dpad-btn.down {
+        grid-area: 3 / 2;
+        border-radius: 0 0 10px 10px;
+      }
+
+      .dpad-btn::before {
+        content: "";
+        width: 0;
+        height: 0;
+        border: 9px solid transparent;
+      }
+
+      .dpad-btn.up::before {
+        border-bottom: 14px solid #6b4423;
+        border-top-width: 0;
+      }
+
+      .dpad-btn.down::before {
+        border-top: 14px solid #6b4423;
+        border-bottom-width: 0;
+      }
+
+      .dpad-btn.left::before {
+        border-right: 14px solid #6b4423;
+        border-left-width: 0;
+      }
+
+      .dpad-btn.right::before {
+        border-left: 14px solid #6b4423;
+        border-right-width: 0;
+      }
+
+      #touch-dpad[data-dir="up"] .dpad-btn.up,
+      #touch-dpad[data-dir="down"] .dpad-btn.down,
+      #touch-dpad[data-dir="left"] .dpad-btn.left,
+      #touch-dpad[data-dir="right"] .dpad-btn.right {
+        background: #e8c877;
+      }
+
+      #touch-interact {
+        position: absolute;
+        right: calc(1.25rem + env(safe-area-inset-right, 0px));
+        bottom: calc(
+          1rem + env(safe-area-inset-bottom, 0px) + var(--pad-size) * 0.28
+        );
+        width: calc(var(--pad-size) * 0.68);
+        height: calc(var(--pad-size) * 0.68);
+        border-radius: 50%;
+        border: 4px solid #8a5a2a;
+        background: #fdecc8;
+        box-shadow:
+          inset 0 0 0 3px #e8c877,
+          0 4px 0 rgba(0, 0, 0, 0.3);
+        color: #4a2f1a;
+        font-family: monogram, monospace;
+        font-size: 1.15rem;
+        padding: 0;
+        pointer-events: auto;
+        touch-action: none;
+        opacity: 0.88;
+      }
+
+      #touch-interact.pressed {
+        background: #e8c877;
+        transform: translateY(3px);
+        box-shadow: inset 0 0 0 3px #e8c877;
+      }
+
+      #touch-interact.ready {
+        opacity: 1;
+        animation: interact-hint-pulse 1s ease-in-out infinite;
+      }
+
       #outro-screen {
         position: absolute;
         inset: 0;
@@ -460,6 +633,7 @@
         color: #4a2f1a;
         text-align: center;
         max-width: 92%;
+        overflow-wrap: anywhere;
         box-sizing: border-box;
         pointer-events: none;
       }
@@ -1003,6 +1177,7 @@
       .pc-panel p {
         margin: 0;
         line-height: 1.1;
+        overflow-wrap: anywhere;
       }
 
       .pc-panel.compact {
@@ -1306,6 +1481,7 @@
         font-size: 1.3rem;
         display: none;
         align-items: center;
+        gap: 0.4rem;
         border: 3px solid #6b4423;
         border-radius: 8px;
         background: #e8c877;
@@ -1532,7 +1708,8 @@
         margin: 0;
         font-family: monogram, monospace;
         font-weight: bold;
-        font-size: 7.5rem;
+        font-size: min(7.5rem, 15vw, 22vh);
+        text-align: center;
         letter-spacing: 0.3rem;
         color: #ebe1f7;
         text-shadow:
@@ -1551,8 +1728,10 @@
 
       #welcome-controls {
         margin: 0;
+        max-width: 92vw;
+        text-align: center;
         font-family: monogram, monospace;
-        font-size: 2.2rem;
+        font-size: min(2.2rem, 6vw);
         color: #fff;
         text-shadow: 2px 2px 0 #2d1b4d;
         user-select: none;
@@ -1560,8 +1739,10 @@
 
       #welcome-subtitle {
         margin: 0;
+        max-width: 92vw;
+        text-align: center;
         font-family: monogram, monospace;
-        font-size: 2.2rem;
+        font-size: min(2.2rem, 6vw);
         color: #fff;
         text-shadow: 2px 2px 0 #2d1b4d;
         animation: blink 1.2s steps(2, start) infinite;
@@ -1571,6 +1752,120 @@
       @keyframes blink {
         to {
           visibility: hidden;
+        }
+      }
+
+      /* phones in landscape (and other short windows): shrink the popups so
+         they fit the height and keep their navigation on-screen */
+      @media (max-height: 520px) {
+        .pc-stand,
+        .pc-desk {
+          display: none;
+        }
+
+        .pc-glass {
+          height: 58vh;
+        }
+
+        #pc-screen,
+        #scroll-screen {
+          gap: 0.6rem;
+        }
+
+        #scroll-wrap {
+          --scroll-body-h: 46vh;
+          width: min(26rem, 56vw);
+        }
+
+        #scroll-nav {
+          width: min(30rem, 80vw);
+        }
+
+        #library-title {
+          font-size: 1.2rem;
+        }
+
+        #library-image-wrap {
+          width: auto;
+          height: 78vh;
+          margin-top: 2.6rem;
+        }
+
+        #outro-title {
+          top: 3%;
+          font-size: 1.4rem;
+        }
+
+        #outro-note-text {
+          font-size: min(3.2rem, 7.5vh);
+        }
+
+        #outro-zombie,
+        #outro-peashooter {
+          height: 32vh;
+        }
+      }
+
+      /* narrow phones in portrait */
+      @media (max-width: 700px) {
+        #pc-setup,
+        #pc-nav {
+          width: 94vw;
+        }
+
+        .pc-monitor {
+          padding: 0.8rem 0.8rem 1.5rem;
+        }
+
+        .pc-mouse {
+          display: none;
+        }
+
+        /* heading above its text so long values (e.g. the email) fit */
+        .pc-panel.compact {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+        }
+
+        .pc-panel.compact .pc-panel-heading {
+          flex: none;
+        }
+
+        #outro-title {
+          top: 11%;
+          font-size: 1.5rem;
+          white-space: nowrap;
+        }
+
+        #outro-note {
+          left: 7%;
+          width: 86%;
+          top: 22%;
+          height: 56%;
+          padding: 0 3%;
+        }
+
+        #outro-note-text {
+          font-size: min(3.2rem, 8vw);
+          overflow-wrap: anywhere;
+        }
+
+        #outro-zombie,
+        #outro-peashooter {
+          height: 16vh;
+          bottom: 2vh;
+        }
+
+        #library-title {
+          top: 4.2rem;
+          width: 92%;
+          font-size: 1.35rem;
+        }
+
+        #library-image-wrap {
+          width: 92%;
+          margin-top: 4rem;
         }
       }
     </style>
@@ -1599,7 +1894,20 @@
         </button>
         <ul id="explore-list"></ul>
       </div>
-      <p id="interact-hint">Press Enter to interact</p>
+      <p id="interact-hint">
+        <span class="kbd-only">Press Enter to interact</span>
+        <span class="touch-only">Tap Interact</span>
+      </p>
+      <div id="touch-controls">
+        <div id="touch-dpad" role="group" aria-label="Move">
+          <span class="dpad-btn up"></span>
+          <span class="dpad-btn left"></span>
+          <span class="dpad-center"></span>
+          <span class="dpad-btn right"></span>
+          <span class="dpad-btn down"></span>
+        </div>
+        <button id="touch-interact" aria-label="Interact">Interact</button>
+      </div>
       <div id="outro-screen">
         <div class="outro-dot" style="left: 8%; bottom: 6%; background: #e05a3f"></div>
         <div class="outro-dot" style="left: 14%; bottom: 10%; background: #f4d14d"></div>
@@ -1617,7 +1925,7 @@ Email: <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a></p>
         <button id="outro-close" aria-label="Close">&times; Close</button>
       </div>
       <div id="library-screen">
-        <h2 id="library-title">Currently reading — hover a shelf row</h2>
+        <h2 id="library-title">Currently reading — <span class="kbd-only">hover</span><span class="touch-only">tap</span> a shelf row</h2>
         <div id="library-image-wrap">
           <img src="/library-shelf.jpg" alt="Bookshelf" />
           <div class="library-column library-col-0">
@@ -1700,7 +2008,7 @@ Email: <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a></p>
       <audio id="bgm" src="/bgm.mp3" loop preload="auto"></audio>
       <audio id="outro-bgm" src="/pvz-theme.mp3" loop preload="auto"></audio>
       <button id="music-toggle" aria-label="Toggle music" aria-pressed="true">🔊</button>
-      <button id="skip-intro" aria-label="Skip introduction">Skip (Esc) &rarr;</button>
+      <button id="skip-intro" aria-label="Skip introduction">Skip<span class="kbd-only"> (Esc)</span> &rarr;</button>
       <div id="welcome-screen">
         <div id="welcome-bg">
           <div class="stars"></div>
@@ -1724,8 +2032,14 @@ Email: <a href="mailto:chigaswami@gmail.com">chigaswami@gmail.com</a></p>
         </div>
         <div id="welcome-content">
           <h1 id="welcome-title">CHIRAG'S PORTFOLIO</h1>
-          <p id="welcome-controls">WASD or Arrow Keys to move</p>
-          <p id="welcome-subtitle">Press any key or click to start</p>
+          <p id="welcome-controls">
+            <span class="kbd-only">WASD or Arrow Keys to move</span>
+            <span class="touch-only">Use the on-screen pad to move</span>
+          </p>
+          <p id="welcome-subtitle">
+            <span class="kbd-only">Press any key or click to start</span>
+            <span class="touch-only">Tap to start</span>
+          </p>
         </div>
       </div>
     </div>
